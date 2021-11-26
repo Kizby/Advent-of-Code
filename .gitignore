@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Local Visual Studio files
+**/.vs/*
+*.vcxproj.user
+*/x64/*
+
+# input data
+input/*
