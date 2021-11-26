@@ -147,12 +147,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Advent of Code 2015.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Utility\Utility.vcxproj">
       <Project>{d6a57c70-e8ab-40ff-8cb5-3810bfa1089b}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
