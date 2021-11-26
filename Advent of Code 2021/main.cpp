@@ -305,7 +305,7 @@ int64_t day25_2(ifstream &&in) {
   return result;
 }
 
-int64_t(* const DAYS[25][2])(ifstream &&in) = {
+int64_t(*const DAYS[25][2])(ifstream &&in) = {
   {day1_1, day1_2},
   {day2_1, day2_2},
   {day3_1, day3_2},
@@ -333,6 +333,6 @@ int64_t(* const DAYS[25][2])(ifstream &&in) = {
   {day25_1, day25_2},
 };
 
-int64_t main() {
-  report(DAYS[DAY - 1][PART - 1](input(20__, DAY)));
+int main() {
+  report(DAYS[DAY - 1][PART - 1](input(2021, DAY)));
 }
