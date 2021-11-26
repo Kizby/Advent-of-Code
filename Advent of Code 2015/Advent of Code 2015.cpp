@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 3;
+const int64_t DAY = 4;
 const int64_t PART = 1;
-
-int64_t day3_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day3_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day4_1(ifstream &&in) {
   int64_t result = 0;
@@ -337,6 +325,59 @@ int64_t day2_2(ifstream &&in) {
     auto b = 2 * (vals[1] + vals[2]);
     auto c = 2 * (vals[2] + vals[0]);
     result += vals[0] * vals[1] * vals[2] + min({a, b, c});
+  }
+  return result;
+}
+
+int64_t day3_1(ifstream &&in) {
+  int64_t result = 0;
+  set<vector<int>> seen;
+  vector<int> pos = {0, 0};
+
+  seen.insert(pos);
+  ++result;
+
+  char c;
+  while(in >> c) {
+    switch(c) {
+    case '>': pos[0]++; break;
+    case '<': pos[0]--; break;
+    case '^': pos[1]++; break;
+    case 'v': pos[1]--; break;
+    }
+    if(seen.insert(pos).second) {
+      ++result;
+    }
+  }
+  return result;
+}
+
+int64_t day3_2(ifstream &&in) {
+  int64_t result = 0;
+  set<vector<int>> seen;
+  vector<vector<int>> both = {{0, 0}, {0, 0}};
+  int which = 0;
+
+  seen.insert(both[which]);
+  ++result;
+
+  char c;
+  while(in >> c) {
+    if(strchr("<>^v", c) == nullptr) {
+      continue;
+    }
+    auto &pos = both[which % 2];
+    ++which;
+
+    switch(c) {
+    case '>': pos[0]++; break;
+    case '<': pos[0]--; break;
+    case '^': pos[1]++; break;
+    case 'v': pos[1]--; break;
+    }
+    if(seen.insert(pos).second) {
+      ++result;
+    }
   }
   return result;
 }
