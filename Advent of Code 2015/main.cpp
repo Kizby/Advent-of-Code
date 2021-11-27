@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 14;
+const int64_t DAY = 15;
 const int64_t PART = 1;
-
-int64_t day14_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day14_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day15_1(ifstream &&in) {
   int64_t result = 0;
@@ -797,6 +785,68 @@ int64_t day13_2(ifstream &&in) {
   }
 
   return result;
+}
+
+// given speeds, how long they can go that speed, and how long they have to rest in between, what's the farthest specified reindeer can get?
+int64_t day14_1(ifstream &&in) {
+  int64_t result = 0;
+  int64_t total = 2503;
+  for (auto tokens : split(split(slurp(in)), " ")) {
+    auto speed = stoll(tokens[3]);
+    auto duration = stoll(tokens[6]);
+    auto rest = stoll(tokens[13]);
+
+    int elapsed = 0;
+    int distance = 0;
+    while (elapsed < total) {
+      distance += speed * duration;
+      elapsed += duration;
+      if (elapsed > total) {
+        distance -= speed * (elapsed - total);
+        break;
+      }
+      elapsed += rest;
+    }
+    if (distance > result) {
+      result = distance;
+    }
+  }
+
+  return result;
+}
+
+// who's in the lead for the most seconds of the race?
+int64_t day14_2(ifstream &&in) {
+  int64_t result = 0;
+  vector<vector<int64_t>> reindeer = {};
+  for (auto tokens : split(split(slurp(in)), " ")) {
+    auto speed = stoll(tokens[3]);
+    auto duration = stoll(tokens[6]);
+    auto rest = stoll(tokens[13]);
+    reindeer.push_back({speed, duration, rest, 0});
+  }
+
+  vector<int64_t> pos(reindeer.size());
+  vector<int64_t> scores(reindeer.size());
+  for (int i = 0; i < 2503; ++i) {
+    int64_t best = 0;
+    for (int j = 0; j < reindeer.size(); ++j) {
+      if (reindeer[j][3] < reindeer[j][1]) {
+        pos[j] += reindeer[j][0];
+      }
+      reindeer[j][3] = (reindeer[j][3] + 1) % (reindeer[j][1] + reindeer[j][2]);
+      if (pos[j] > best) {
+        best = pos[j];
+      }
+    }
+    for (int j = 0; j < reindeer.size(); ++j) {
+      if (pos[j] == best) {
+        ++scores[j];
+      }
+    }
+  }
+
+  return *max_element(scores.begin(), scores.end());
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
