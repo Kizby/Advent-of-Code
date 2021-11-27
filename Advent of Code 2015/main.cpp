@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 11;
+const int64_t DAY = 12;
 const int64_t PART = 1;
-
-int64_t day11_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day11_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day12_1(ifstream &&in) {
   int64_t result = 0;
@@ -651,6 +639,87 @@ int64_t day10_2(ifstream &&in) {
     }
   }
   return lines[50].length();
+}
+
+// find santa's incrementally next password that meets this policy
+int64_t day11_1(ifstream &&in) {
+  string password = slurp(in);
+  while (true) {
+    for (int64_t i = password.length(); i >= 0; --i) {
+      if (password[i] < 'z') {
+        ++password[i];
+        if (password[i] == 'i' || password[i] == 'o' || password[i] == 'l') {
+          ++password[i];
+        }
+        break;
+      }
+      password[i] = 'a';
+    }
+    bool hasStraight = false;
+    for (int i = 0; i < password.length() - 2; ++i) {
+      if (password[i + 1] - password[i] == 1 && password[i + 2] - password[i + 1] == 1) {
+        hasStraight = true;
+        break;
+      }
+    }
+    if (!hasStraight) {
+      continue;
+    }
+    int pairs = 0;
+    for (char c = 'a'; c <= 'z'; ++c) {
+      if (password.find(string("") + c + c) != string::npos) {
+        ++pairs;
+      }
+    }
+    if (pairs > 1) {
+      report(password);
+      exit(0);
+    }
+  }
+  return 0;
+}
+
+// find the next one after that
+int64_t day11_2(ifstream &&in) {
+  string password = slurp(in);
+  bool foundOne = false;
+  while (true) {
+    for (int64_t i = password.length() - 1; i >= 0; --i) {
+      if (password[i] < 'z') {
+        ++password[i];
+        if (password[i] == 'i' || password[i] == 'o' || password[i] == 'l') {
+          ++password[i];
+        }
+        break;
+      }
+      password[i] = 'a';
+    }
+    bool hasStraight = false;
+    for (int i = 0; i < password.length() - 2; ++i) {
+      if (password[i + 1] - password[i] == 1 && password[i + 2] - password[i + 1] == 1) {
+        hasStraight = true;
+        break;
+      }
+    }
+    if (!hasStraight) {
+      continue;
+    }
+    int pairs = 0;
+    for (char c = 'a'; c <= 'z'; ++c) {
+      if (password.find(string("") + c + c) != string::npos) {
+        ++pairs;
+      }
+    }
+    if (pairs > 1) {
+      if (!foundOne) {
+        foundOne = true;
+      } else {
+        report(password);
+        exit(0);
+      }
+    }
+  }
+  return 0;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
