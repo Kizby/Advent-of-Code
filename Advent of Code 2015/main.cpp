@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 10;
+const int64_t DAY = 11;
 const int64_t PART = 1;
-
-int64_t day10_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day10_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day11_1(ifstream &&in) {
   int64_t result = 0;
@@ -629,6 +617,40 @@ int64_t day9_2(ifstream &&in) {
   }
 
   return result;
+}
+
+// find the length of the 40th iteration of a look-and-say sequence
+int64_t day10_1(ifstream &&in) {
+  string lines[41] = {};
+  lines[0] = slurp(in);
+  for (int i = 1; i <= 40; ++i) {
+    //cout << lines[i - 1] << endl;
+    for (int j = 0; j < lines[i - 1].length();) {
+      int k = j + 1;
+      while (k < lines[i - 1].length() && lines[i - 1][j] == lines[i - 1][k]) ++k;
+      lines[i] += to_string(k - j);
+      lines[i] += lines[i - 1][j];
+      j = k;
+    }
+  }
+  return lines[40].length();
+}
+
+// find the length of the 50th iteration
+int64_t day10_2(ifstream &&in) {
+  string lines[51] = {};
+  lines[0] = slurp(in);
+  for (int i = 1; i <= 50; ++i) {
+    //cout << lines[i - 1] << endl;
+    for (int j = 0; j < lines[i - 1].length();) {
+      int k = j + 1;
+      while (k < lines[i - 1].length() && lines[i - 1][j] == lines[i - 1][k]) ++k;
+      lines[i] += to_string(k - j);
+      lines[i] += lines[i - 1][j];
+      j = k;
+    }
+  }
+  return lines[50].length();
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
