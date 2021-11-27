@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 6;
+const int64_t DAY = 7;
 const int64_t PART = 1;
-
-int64_t day6_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day6_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day7_1(ifstream &&in) {
   int64_t result = 0;
@@ -444,6 +432,84 @@ int64_t day5_2(ifstream &&in) {
     }
   }
 
+  return result;
+}
+
+// given instructions of the form "turn on", "turn off", or "toggle" inclusive coordinate ranges, how many positions end up on?
+int64_t day6_1(ifstream &&in) {
+  static bool field[1000][1000] = {};
+  string line;
+  while (getline(in, line)) {
+    auto tokens = split(line, " ");
+    auto action = -1;
+    if (tokens[0] == "turn") {
+      tokens.erase(tokens.begin());
+      if (tokens[0] == "on") {
+        action = 0;
+      } else if (tokens[0] == "off") {
+        action = 1;
+      }
+    } else if (tokens[0] == "toggle") {
+      action = 2;
+    }
+    auto start = map_to_num(split(tokens[1], ","));
+    auto end = map_to_num(split(tokens[3], ","));
+    for (auto i = start[0]; i <= end[0]; ++i) {
+      for (auto j = start[1]; j <= end[1]; ++j) {
+        switch (action) {
+        case 0: field[i][j] = true; break;
+        case 1: field[i][j] = false; break;
+        case 2: field[i][j] = !field[i][j]; break;
+        }
+      }
+    }
+  }
+  int64_t result = 0;
+  for (int i = 0; i < 1000; i++) {
+    for (int j = 0; j < 1000; j++) {
+      if (field[i][j]) {
+        ++result;
+      }
+    }
+  }
+  return result;
+}
+
+// now interpret those instructions as add one, subtract one (minimum zero), and add two; what's the total sum?
+int64_t day6_2(ifstream &&in) {
+  static int field[1000][1000] = {};
+  string line;
+  while (getline(in, line)) {
+    auto tokens = split(line, " ");
+    auto action = -1;
+    if (tokens[0] == "turn") {
+      tokens.erase(tokens.begin());
+      if (tokens[0] == "on") {
+        action = 0;
+      } else if (tokens[0] == "off") {
+        action = 1;
+      }
+    } else if (tokens[0] == "toggle") {
+      action = 2;
+    }
+    auto start = map_to_num(split(tokens[1], ","));
+    auto end = map_to_num(split(tokens[3], ","));
+    for (auto i = start[0]; i <= end[0]; ++i) {
+      for (auto j = start[1]; j <= end[1]; ++j) {
+        switch (action) {
+        case 0: ++field[i][j]; break;
+        case 1: if (field[i][j] > 0) --field[i][j]; break;
+        case 2: field[i][j] += 2; break;
+        }
+      }
+    }
+  }
+  int64_t result = 0;
+  for (int i = 0; i < 1000; i++) {
+    for (int j = 0; j < 1000; j++) {
+      result += field[i][j];
+    }
+  }
   return result;
 }
 
