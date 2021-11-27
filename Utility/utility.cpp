@@ -77,23 +77,34 @@ vector<int64_t> map_to_num(const vector<string>& vec) {
 }
 
 vector<vector<size_t>> permutations(size_t start, size_t end) {
-	if (start >= end) {
-		return vector<vector<size_t>>{vector<size_t>{}};
-	}
-	auto base = permutations(start, end - 1);
 	vector<vector<size_t>> result;
-	for (auto elem : base) {
-		for (int i = 0; i <= elem.size(); ++i) {
-			auto next = elem;
-			next.insert(next.begin() + i, end - 1);
-			result.push_back(move(next));
-		}
-	}
+	permutations(start, end, [&result](vector<size_t> &&vec) {
+		result.push_back(move(vec));
+		});
 	return result;
 }
 
 vector<vector<size_t>> permutations(size_t n) {
 	return permutations(0, n);
+}
+
+void permutations(size_t start, size_t end, function<void(vector<size_t>&&)> callback) {
+	if (start >= end) {
+		callback({});
+		return;
+	}
+	permutations(start, end - 1, [end, callback](vector<size_t> &&base) {
+		for (int i = 0; i <= base.size(); ++i) {
+			auto next = base;
+			next.insert(next.begin() + i, end - 1);
+			callback(move(next));
+		}
+		});
+}
+
+
+void permutations(size_t n, function<void(vector<size_t>&&)> callback) {
+	permutations(0, n, callback);
 }
 
 void copy(string s)

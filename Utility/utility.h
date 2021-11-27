@@ -32,6 +32,8 @@ vector<int64_t> map_to_num(const vector<string>& vec);
 
 vector<vector<size_t>> permutations(size_t start, size_t end);
 vector<vector<size_t>> permutations(size_t n);
+void permutations(size_t start, size_t end, function<void(vector<size_t>&&)> callback);
+void permutations(size_t n, function<void(vector<size_t>&&)> callback);
 
 template <typename T, typename C>
 unordered_map<T, int> histogram(C container) {
