@@ -245,6 +245,7 @@ int64_t day25_2(ifstream &&in) {
   return result;
 }
 
+// if each ( goes up one floor and each ) goes down one floor, what floor do we end up on?
 int64_t day1_1(ifstream &&in) {
   int64_t floor = 0;
   char c;
@@ -259,6 +260,7 @@ int64_t day1_1(ifstream &&in) {
   return floor;
 }
 
+// on which step do we reach floor -1?
 int64_t day1_2(ifstream &&in) {
   int64_t floor = 0;
   int64_t step = 0;
@@ -279,6 +281,7 @@ int64_t day1_2(ifstream &&in) {
   return step;
 }
 
+// given LxWxH triples, find the total surface area of corresponding boxes, plus the surface area of the smallest side of each box
 int64_t day2_1(ifstream &&in) {
   int64_t result = 0;
   auto dims = split(split(slurp(in)), "x");
@@ -292,6 +295,7 @@ int64_t day2_1(ifstream &&in) {
   return result;
 }
 
+// find the total volume of the corresponding boxes, plus the perimeter of the smallest side of each
 int64_t day2_2(ifstream &&in) {
   int64_t result = 0;
   auto dims = split(split(slurp(in)), "x");
@@ -305,6 +309,7 @@ int64_t day2_2(ifstream &&in) {
   return result;
 }
 
+// given ^>v< arrows indicating navigation of a square lattice, how many distinct coordinates are visited?
 int64_t day3_1(ifstream &&in) {
   int64_t result = 0;
   set<vector<int>> seen;
@@ -328,6 +333,7 @@ int64_t day3_1(ifstream &&in) {
   return result;
 }
 
+// two santas now interpret those arrows in turn; how many distinct coordinates are visited?
 int64_t day3_2(ifstream &&in) {
   int64_t result = 0;
   set<vector<int>> seen;
@@ -358,6 +364,7 @@ int64_t day3_2(ifstream &&in) {
   return result;
 }
 
+// what number should be appended to the input to get an MD5 checksum that, as a hex string, starts with 5 zeroes?
 int64_t day4_1(ifstream &&in) {
   string key = slurp(in);
   for (int i = 1; ; ++i) {
@@ -370,6 +377,7 @@ int64_t day4_1(ifstream &&in) {
   return -1;
 }
 
+// now 6 zeroes
 int64_t day4_2(ifstream &&in) {
   string key = slurp(in);
   for (int i = 1; ; ++i) {
@@ -382,6 +390,7 @@ int64_t day4_2(ifstream &&in) {
   return -1;
 }
 
+// how many lines have at least 3 vowels, some letter appearing twice in a row, and none of the substrings "ab", "cd", "pq", or "xy"?
 int64_t day5_1(ifstream &&in) {
   int64_t result = 0;
 
@@ -414,6 +423,7 @@ int64_t day5_1(ifstream &&in) {
   return result;
 }
 
+// how many lines have a 2 character substring appearing twice without overlap, and a letter appearing twice with one letter between?
 int64_t day5_2(ifstream &&in) {
   int64_t result = 0;
 
