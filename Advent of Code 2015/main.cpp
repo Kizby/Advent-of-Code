@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 17;
+const int64_t DAY = 18;
 const int64_t PART = 1;
-
-int64_t day17_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day17_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day18_1(ifstream &&in) {
   int64_t result = 0;
@@ -957,6 +945,49 @@ int64_t day16_2(ifstream &&in) {
     }
     if (valid) {
       return stoll(tokens[1]);
+    }
+  }
+  return -1;
+}
+
+// how many ways can we exactly split 150 units among these containers?
+int64_t day17_1(ifstream &&in) {
+  auto containers = map_to_num(split(slurp(in)));
+  int64_t result = 0;
+  for (int i = 0; i < 1 << containers.size(); ++i) {
+    int64_t capacity = 0;
+    for (int mask = 1, cur = 0; mask < i; mask <<= 1, ++cur) {
+      if (mask & i) {
+        capacity += containers[cur];
+      }
+    }
+    if (capacity == 150) {
+      ++result;
+    }
+  }
+  return result;
+}
+
+// what if we require the minimum number of containers?
+int64_t day17_2(ifstream &&in) {
+  auto containers = map_to_num(split(slurp(in)));
+  map<int, int> results = {};
+  for (int i = 0; i < 1 << containers.size(); ++i) {
+    int64_t capacity = 0;
+    int count = 0;
+    for (int mask = 1, cur = 0; mask < i; mask <<= 1, ++cur) {
+      if (mask & i) {
+        capacity += containers[cur];
+        ++count;
+      }
+    }
+    if (capacity == 150) {
+      ++results[count];
+    }
+  }
+  for (int i = 1; i <= containers.size(); ++i) {
+    if (results.contains(i)) {
+      return results[i];
     }
   }
   return -1;
