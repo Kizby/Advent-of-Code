@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 7;
+const int64_t DAY = 8;
 const int64_t PART = 1;
-
-int64_t day7_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day7_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day8_1(ifstream &&in) {
   int64_t result = 0;
@@ -511,6 +499,69 @@ int64_t day6_2(ifstream &&in) {
     }
   }
   return result;
+}
+
+struct day7_connection {
+  string in1;
+  string in2;
+  string op;
+};
+
+uint16_t calculate(string which, const unordered_map<string, day7_connection> &wires, unordered_map<string, uint16_t> &cache) {
+  if (!cache.contains(which)) {
+    if (isdigit(which[0])) {
+      return (uint16_t)stoull(which);
+    }
+    auto command = wires.at(which);
+    if (command.op == "STORE") {
+      cache[which] = calculate(command.in1, wires, cache);
+    } else if (command.op == "NOT") {
+      cache[which] = ~calculate(command.in1, wires, cache);
+    } else if (command.op == "AND") {
+      cache[which] = calculate(command.in1, wires, cache) & calculate(command.in2, wires, cache);
+    } else if (command.op == "OR") {
+      cache[which] = calculate(command.in1, wires, cache) | calculate(command.in2, wires, cache);
+    } else if (command.op == "LSHIFT") {
+      cache[which] = calculate(command.in1, wires, cache) << calculate(command.in2, wires, cache);
+    } else if (command.op == "RSHIFT") {
+      cache[which] = calculate(command.in1, wires, cache) >> calculate(command.in2, wires, cache);
+    }
+  }
+  return cache[which];
+}
+
+// given the circuit description, what value is on wire a?
+int64_t day7_1(ifstream &&in) {
+  unordered_map<string, day7_connection> wires = {};
+  for (auto tokens : split(split(slurp(in)), " ")) {
+    if (tokens.size() == 3) {
+      wires[tokens[2]] = day7_connection{.in1 = tokens[0], .op = "STORE"};
+    } else if (tokens.size() == 4) {
+      wires[tokens[3]] = day7_connection{.in1 = tokens[1], .op = tokens[0]};
+    } else {
+      wires[tokens[4]] = day7_connection{.in1 = tokens[0], .in2 = tokens[2], .op = tokens[1]};
+    }
+  }
+  unordered_map<string, uint16_t> cache = {};
+  return calculate("a", wires, cache);
+}
+
+// override wire b with a's value, then recalculate a
+int64_t day7_2(ifstream &&in) {
+  unordered_map<string, day7_connection> wires = {};
+  for (auto tokens : split(split(slurp(in)), " ")) {
+    if (tokens.size() == 3) {
+      wires[tokens[2]] = day7_connection{.in1 = tokens[0], .op = "STORE"};
+    } else if (tokens.size() == 4) {
+      wires[tokens[3]] = day7_connection{.in1 = tokens[1], .op = tokens[0]};
+    } else {
+      wires[tokens[4]] = day7_connection{.in1 = tokens[0], .in2 = tokens[2], .op = tokens[1]};
+    }
+  }
+  unordered_map<string, uint16_t> cache = {};
+  wires["b"] = day7_connection{.in1 = to_string(calculate("a", wires, cache)), .op = "STORE"};
+  cache = {};
+  return calculate("a", wires, cache);
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
