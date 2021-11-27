@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 13;
+const int64_t DAY = 14;
 const int64_t PART = 1;
-
-int64_t day13_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day13_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day14_1(ifstream &&in) {
   int64_t result = 0;
@@ -743,6 +731,70 @@ int64_t day12_2(ifstream &&in) {
   picojson::parse(obj, in);
 
   int64_t result = (int64_t)day12_collect(obj, true);
+
+  return result;
+}
+
+// given preferences for seating partners, maximize happiness
+int64_t day13_1(ifstream &&in) {
+  map<string, map<string, int>> prefs = {};
+  vector<string> names = {};
+  for (auto tokens : split(split(slurp(in)), "[ \\.]")) {
+    auto value = stoll(tokens[3]);
+    if (tokens[2] == "lose") {
+      value *= -1;
+    }
+    if (!prefs.contains(tokens[0])) {
+      names.push_back(tokens[0]);
+    }
+    prefs[tokens[0]][tokens[10]] = value;
+    //cout << tokens[0] << " " << tokens[10] << " " << value << endl;
+  }
+
+  int64_t result = -10000;
+  for (auto perm : permutations(names.size())) {
+    int64_t happiness = 0;
+    for (auto i = 0; i < names.size(); ++i) {
+      happiness += prefs[names[perm[i]]][names[perm[(i + 1) % perm.size()]]];
+      happiness += prefs[names[perm[(i + 1) % perm.size()]]][names[perm[i]]];
+    }
+    if (happiness > result) {
+      result = happiness;
+    }
+  }
+
+  return result;
+}
+
+// now include yourself, who is and elicits complete ambivalence
+int64_t day13_2(ifstream &&in) {
+  map<string, map<string, int>> prefs = {};
+  vector<string> names = {"yourself"};
+  for (auto tokens : split(split(slurp(in)), "[ \\.]")) {
+    auto value = stoll(tokens[3]);
+    if (tokens[2] == "lose") {
+      value *= -1;
+    }
+    if (!prefs.contains(tokens[0])) {
+      names.push_back(tokens[0]);
+      prefs[tokens[0]]["yourself"] = 0;
+      prefs["yourself"][tokens[0]] = 0;
+    }
+    prefs[tokens[0]][tokens[10]] = value;
+    //cout << tokens[0] << " " << tokens[10] << " " << value << endl;
+  }
+
+  int64_t result = -10000;
+  for (auto perm : permutations(names.size())) {
+    int64_t happiness = 0;
+    for (auto i = 0; i < names.size(); ++i) {
+      happiness += prefs[names[perm[i]]][names[perm[(i + 1) % perm.size()]]];
+      happiness += prefs[names[perm[(i + 1) % perm.size()]]][names[perm[i]]];
+    }
+    if (happiness > result) {
+      result = happiness;
+    }
+  }
 
   return result;
 }
