@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 8;
+const int64_t DAY = 9;
 const int64_t PART = 1;
-
-int64_t day8_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day8_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day9_1(ifstream &&in) {
   int64_t result = 0;
@@ -562,6 +550,41 @@ int64_t day7_2(ifstream &&in) {
   wires["b"] = day7_connection{.in1 = to_string(calculate("a", wires, cache)), .op = "STORE"};
   cache = {};
   return calculate("a", wires, cache);
+}
+
+// how many more characters are there in the given escaped representations of strings than in the underlying strings themselves?
+int64_t day8_1(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  while (getline(in, line)) {
+    result += 2;
+    for (size_t pos = line.find('\\'); pos != string::npos && pos < line.length() - 1; pos = line.find('\\', pos + 2)) {
+      if (line[pos + 1] == '\\') {
+        ++result;
+      } else if (line[pos + 1] == '"') {
+        ++result;
+      } else if (line[pos + 1] == 'x') {
+        result += 3;
+      }
+    }
+  }
+  return result;
+}
+
+// how many additional characters would be required to escape these strings?
+int64_t day8_2(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  while (getline(in, line)) {
+    result += 2;
+    for (auto c : line) {
+      switch (c) {
+      case '"': ++result; break;
+      case '\\': ++result; break;
+      }
+    }
+  }
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
