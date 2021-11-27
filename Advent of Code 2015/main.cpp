@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 16;
+const int64_t DAY = 17;
 const int64_t PART = 1;
-
-int64_t day16_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day16_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day17_1(ifstream &&in) {
   int64_t result = 0;
@@ -914,6 +902,64 @@ int64_t day15_2(ifstream &&in) {
   }
 
   return result;
+}
+
+// which Sue is compatible with the goal spec?
+int64_t day16_1(ifstream &&in) {
+  map<string, int64_t> goal = {
+    {"children:", 3},
+    {"cats:", 7},
+    {"samoyeds:", 2},
+    {"pomeranians:", 3},
+    {"akitas:", 0},
+    {"vizslas:", 0},
+    {"goldfish:", 5},
+    {"trees:", 3},
+    {"cars:", 2},
+    {"perfumes:", 1},
+  };
+  for (auto tokens : split(split(slurp(in)), " ")) {
+    bool valid = true;
+    for (int i = 2; i < tokens.size(); i += 2) {
+      if (goal[tokens[i]] != stoll(tokens[i + 1])) {
+        valid = false;
+        break;
+      }
+    }
+    if (valid) {
+      return stoll(tokens[1]);
+    }
+  }
+  return -1;
+}
+
+// same, but some of the specs aren't equality; regex replacement made this quick to implement
+int64_t day16_2(ifstream &&in) {
+  map<string, function<bool(int64_t)>> goal = {
+    {"children:", [](int64_t val) { return 3 == val; }},
+    {"cats:", [](int64_t val) { return 7 < val; }},
+    {"samoyeds:", [](int64_t val) { return 2 == val; }},
+    {"pomeranians:", [](int64_t val) { return 3 > val; }},
+    {"akitas:", [](int64_t val) { return 0 == val; }},
+    {"vizslas:", [](int64_t val) { return 0 == val; }},
+    {"goldfish:", [](int64_t val) { return 5 > val; }},
+    {"trees:", [](int64_t val) { return 3 < val; }},
+    {"cars:", [](int64_t val) { return 2 == val; }},
+    {"perfumes:", [](int64_t val) { return 1 == val; }},
+  };
+  for (auto tokens : split(split(slurp(in)), " ")) {
+    bool valid = true;
+    for (int i = 2; i < tokens.size(); i += 2) {
+      if (!goal[tokens[i]](stoll(tokens[i + 1]))) {
+        valid = false;
+        break;
+      }
+    }
+    if (valid) {
+      return stoll(tokens[1]);
+    }
+  }
+  return -1;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
