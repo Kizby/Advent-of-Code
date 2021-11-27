@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 19;
+const int64_t DAY = 20;
 const int64_t PART = 1;
-
-int64_t day19_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day19_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day20_1(ifstream &&in) {
   int64_t result = 0;
@@ -1069,6 +1057,60 @@ int64_t day18_2(ifstream &&in) {
       if (fields[100 % 2][i][j]) {
         ++result;
       }
+    }
+  }
+  return result;
+}
+
+// how many molecules can be created by one application of a replacement rule?
+int64_t day19_1(ifstream &&in) {
+  map<string, vector<string>> replacements = {};
+  string line;
+  while (getline(in, line) && !line.empty()) {
+    auto tokens = split(line, " ");
+    replacements[tokens[0]].push_back(tokens[2]);
+  }
+
+  getline(in, line);
+  set<string> molecules = {};
+  for (int i = 0; i < line.length(); ++i) {
+    for (auto repl : replacements[line.substr(i, 1)]) {
+      molecules.insert(line.substr(0, i) + repl + line.substr(i + 1));
+    }
+    if (i == line.length() - 1) {
+      break;
+    }
+    for (auto repl : replacements[line.substr(i, 2)]) {
+      molecules.insert(line.substr(0, i) + repl + line.substr(i + 2));
+    }
+  }
+
+  return molecules.size();
+}
+
+// how many steps does it take to make the target molecule from "e"?
+// gave up and checked online; was an underlying pattern (properties of Rn, Y, and Ar) that was more universal than I thought
+int64_t day19_2(ifstream &&in) {
+  string line;
+  while (getline(in, line) && !line.empty());
+  getline(in, line);
+
+  int64_t result = -1; // this computation would get rid of the "e" too, so offset by one
+  for (int i = 0; i < line.length(); ++i) {
+    string element;
+    if (i < line.length() - 1 && islower(line[i + 1])) {
+      element = line.substr(i, 2);
+      ++i;
+    } else {
+      element = line.substr(i, 1);
+    }
+    ++result; // always takes at least one step to add an element
+    if (element == "Rn") {
+      --result; // Rn comes for free
+    } else if (element == "Y") {
+      result -= 2; // Y comes for free and brings an element with it
+    } else if (element == "Ar") {
+      --result; // Ar comes for free
     }
   }
   return result;
