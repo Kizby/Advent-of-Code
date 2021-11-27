@@ -167,6 +167,7 @@
     <ProjectReference />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="picojson.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="httplib.h" />
     <ClInclude Include="pch.h" />

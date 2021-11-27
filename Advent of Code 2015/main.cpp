@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 12;
+const int64_t DAY = 13;
 const int64_t PART = 1;
-
-int64_t day12_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day12_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day13_1(ifstream &&in) {
   int64_t result = 0;
@@ -720,6 +708,43 @@ int64_t day11_2(ifstream &&in) {
     }
   }
   return 0;
+}
+
+double day12_collect(picojson::value obj, bool ignoreRed = false) {
+  double result = 0;
+  if (obj.is<double>()) {
+    return obj.get<double>();
+  } else if (obj.is<picojson::array>()) {
+    for (auto elem : obj.get<picojson::array>()) {
+      result += day12_collect(elem, ignoreRed);
+    }
+  } else if (obj.is<picojson::object>()) {
+    for (auto elem : obj.get<picojson::object>()) {
+      if (ignoreRed && elem.second.is<string>() && elem.second.get<string>() == "red") {
+        return 0;
+      }
+      result += day12_collect(elem.second, ignoreRed);
+    }
+  }
+  return result;
+};
+
+int64_t day12_1(ifstream &&in) {
+  picojson::value obj;
+  picojson::parse(obj, in);
+
+  int64_t result = (int64_t)day12_collect(obj);
+
+  return result;
+}
+
+int64_t day12_2(ifstream &&in) {
+  picojson::value obj;
+  picojson::parse(obj, in);
+
+  int64_t result = (int64_t)day12_collect(obj, true);
+
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {

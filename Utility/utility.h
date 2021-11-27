@@ -5,6 +5,7 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #pragma warning(push, 0)
 #include "httplib.h"
+#include "picojson.h"
 #pragma warning(pop)
 
 #include <fstream>
