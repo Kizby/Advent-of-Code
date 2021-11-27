@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 15;
+const int64_t DAY = 16;
 const int64_t PART = 1;
-
-int64_t day15_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day15_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day16_1(ifstream &&in) {
   int64_t result = 0;
@@ -847,6 +835,67 @@ int64_t day14_2(ifstream &&in) {
   }
 
   return *max_element(scores.begin(), scores.end());
+}
+
+// given four properties of each ingredient, find highest product of sum of quantity of ingredients adding to 100
+int64_t day15_1(ifstream &&in) {
+  int64_t total = 100;
+  vector<vector<int64_t>> ingredients = {};
+  for (auto tokens : split(split(slurp(in)), " ")) {
+    ingredients.push_back({stoll(tokens[2]), stoll(tokens[4]), stoll(tokens[6]), stoll(tokens[8])});
+  }
+  // there are four ingredients; no need to generalize
+  int64_t result = 0;
+  for (int i = 0; i <= total; ++i) {
+    for (int j = i; j <= total; ++j) {
+      for (int k = j; k <= total; ++k) {
+        int64_t score = 1;
+        for (int m = 0; m < ingredients[0].size(); ++m) {
+          auto subscore = ingredients[0][m] * i + ingredients[1][m] * (j - i) + ingredients[2][m] * (k - j) + ingredients[3][m] * (total - k);
+          if (subscore < 0) {
+            subscore = 0;
+          }
+          score *= subscore;
+        }
+        if (score > result) {
+          result = score;
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+// do the same, but requiring exactly 500 calories
+int64_t day15_2(ifstream &&in) {
+  int64_t total = 100;
+  vector<vector<int64_t>> ingredients = {};
+  for (auto tokens : split(split(slurp(in)), " ")) {
+    ingredients.push_back({stoll(tokens[2]), stoll(tokens[4]), stoll(tokens[6]), stoll(tokens[8]), stoll(tokens[10])});
+  }
+  // there are four ingredients; no need to generalize
+  int64_t result = 0;
+  for (int i = 0; i <= total; ++i) {
+    for (int j = i; j <= total; ++j) {
+      for (int k = j; k <= total; ++k) {
+        int64_t score = 1;
+        for (int m = 0; m < ingredients[0].size() - 1; ++m) {
+          auto subscore = ingredients[0][m] * i + ingredients[1][m] * (j - i) + ingredients[2][m] * (k - j) + ingredients[3][m] * (total - k);
+          if (subscore < 0) {
+            subscore = 0;
+          }
+          score *= subscore;
+        }
+        auto calories = ingredients[0][4] * i + ingredients[1][4] * (j - i) + ingredients[2][4] * (k - j) + ingredients[3][4] * (total - k);
+        if (calories == 500 && score > result) {
+          result = score;
+        }
+      }
+    }
+  }
+
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
