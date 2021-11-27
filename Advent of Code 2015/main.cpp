@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 18;
+const int64_t DAY = 19;
 const int64_t PART = 1;
-
-int64_t day18_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day18_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day19_1(ifstream &&in) {
   int64_t result = 0;
@@ -991,6 +979,99 @@ int64_t day17_2(ifstream &&in) {
     }
   }
   return -1;
+}
+
+// implement game of life; count alive cells after 100 generations
+int64_t day18_1(ifstream &&in) {
+  bool fields[2][100][100];
+  {
+    string line;
+    size_t row = 0;
+    while (getline(in, line)) {
+      for (int i = 0; i < line.size(); ++i) {
+        fields[0][row][i] = (line[i] == '#');
+      }
+      ++row;
+    }
+  }
+  for (int step = 1; step <= 100; ++step) {
+    for (int i = 0; i < 100; ++i) {
+      for (int j = 0; j < 100; ++j) {
+        int neighbors = 0;
+        for (int k = i - 1; k <= i + 1; ++k) {
+          for (int l = j - 1; l <= j + 1; ++l) {
+            if (k >= 0 && l >= 0 && k < 100 && l < 100 && fields[(step + 1) % 2][k][l]) {
+              ++neighbors;
+            }
+          }
+        }
+        if (fields[(step + 1) % 2][i][j]) {
+          fields[step % 2][i][j] = neighbors == 3 || neighbors == 4;
+        } else {
+          fields[step % 2][i][j] = neighbors == 3;
+        }
+      }
+    }
+  }
+
+  int64_t result = 0;
+  for (int i = 0; i < 100; ++i) {
+    for (int j = 0; j < 100; ++j) {
+      if (fields[100 % 2][i][j]) {
+        ++result;
+      }
+    }
+  }
+  return result;
+}
+
+// same, but force the four corners to always be alive
+int64_t day18_2(ifstream &&in) {
+  bool fields[2][100][100];
+  {
+    string line;
+    size_t row = 0;
+    while (getline(in, line)) {
+      for (int i = 0; i < line.size(); ++i) {
+        fields[0][row][i] = (line[i] == '#');
+      }
+      ++row;
+    }
+  }
+  fields[0][0][0] = fields[0][99][0] = fields[0][0][99] = fields[0][99][99] = true;
+  for (int step = 1; step <= 100; ++step) {
+    for (int i = 0; i < 100; ++i) {
+      for (int j = 0; j < 100; ++j) {
+        int neighbors = 0;
+        for (int k = i - 1; k <= i + 1; ++k) {
+          for (int l = j - 1; l <= j + 1; ++l) {
+            if ((k == 0 || k == 99) && (l == 0 || l == 99)) {
+              ++neighbors;
+            } else if (k >= 0 && l >= 0 && k < 100 && l < 100 && fields[(step + 1) % 2][k][l]) {
+              ++neighbors;
+            }
+          }
+        }
+        if ((i == 0 || i == 99) && (j == 0 || j == 99)) {
+          fields[step % 2][i][j] = true;
+        } else if (fields[(step + 1) % 2][i][j]) {
+          fields[step % 2][i][j] = neighbors == 3 || neighbors == 4;
+        } else {
+          fields[step % 2][i][j] = neighbors == 3;
+        }
+      }
+    }
+  }
+
+  int64_t result = 0;
+  for (int i = 0; i < 100; ++i) {
+    for (int j = 0; j < 100; ++j) {
+      if (fields[100 % 2][i][j]) {
+        ++result;
+      }
+    }
+  }
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
