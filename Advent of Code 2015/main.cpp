@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 4;
+const int64_t DAY = 5;
 const int64_t PART = 1;
-
-int64_t day4_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day4_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day5_1(ifstream &&in) {
   int64_t result = 0;
@@ -380,6 +368,30 @@ int64_t day3_2(ifstream &&in) {
     }
   }
   return result;
+}
+
+int64_t day4_1(ifstream &&in) {
+  string key = slurp(in);
+  for(int i = 1; ; ++i) {
+    string guess = key + to_string(i);
+    auto md = MD5((unsigned char *)guess.c_str(), guess.length(), nullptr);
+    if(md[0] + md[1] == 0 && md[2] < 0x10) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+int64_t day4_2(ifstream &&in) {
+  string key = slurp(in);
+  for(int i = 1; ; ++i) {
+    string guess = key + to_string(i);
+    auto md = MD5((unsigned char *)guess.c_str(), guess.length(), nullptr);
+    if(md[0] + md[1] + md[2] == 0) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
