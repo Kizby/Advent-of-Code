@@ -38,9 +38,4 @@
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Advent of Code 20__.cpp">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
 </Project>

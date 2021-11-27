@@ -35,6 +35,7 @@
 **/.vs/*
 *.vcxproj.user
 */x64/*
+x64/*
 
 # input data
 input/*
