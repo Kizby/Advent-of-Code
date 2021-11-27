@@ -102,9 +102,29 @@ void permutations(size_t start, size_t end, function<void(vector<size_t>&&)> cal
 		});
 }
 
-
 void permutations(size_t n, function<void(vector<size_t>&&)> callback) {
 	permutations(0, n, callback);
+}
+
+vector<vector<size_t>> partitions(size_t max, size_t count) {
+	vector<vector<size_t>> result;
+	partitions(max, count, [&result](vector<size_t> &&vec) {
+		result.push_back(move(vec));
+		});
+	return result;
+}
+
+void partitions(size_t max, size_t count, function<void(vector<size_t> &&)> callback) {
+	if (count == 1) {
+		callback({max});
+		return;
+	}
+	for (size_t i = 0; i <= max; ++i) {
+		partitions(max - i, count - 1, [i, callback](vector<size_t> &&base) {
+			base.push_back(i);
+			callback(move(base));
+			});
+	}
 }
 
 void copy(string s)

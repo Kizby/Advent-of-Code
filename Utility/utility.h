@@ -35,6 +35,10 @@ vector<vector<size_t>> permutations(size_t n);
 void permutations(size_t start, size_t end, function<void(vector<size_t>&&)> callback);
 void permutations(size_t n, function<void(vector<size_t>&&)> callback);
 
+// partitions of max units into count contiguous sets
+vector<vector<size_t>> partitions(size_t max, size_t count);
+void partitions(size_t max, size_t count, function<void(vector<size_t> &&)> callback);
+
 template <typename T, typename C>
 unordered_map<T, int> histogram(C container) {
 	unordered_map<T, int> result;

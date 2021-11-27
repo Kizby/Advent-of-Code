@@ -844,8 +844,8 @@ int64_t day15_1(ifstream &&in) {
   for (auto tokens : split(split(slurp(in)), " ")) {
     ingredients.push_back({stoll(tokens[2]), stoll(tokens[4]), stoll(tokens[6]), stoll(tokens[8])});
   }
-  // there are four ingredients; no need to generalize
   int64_t result = 0;
+  // there are four ingredients; no need to generalize
   for (int i = 0; i <= total; ++i) {
     for (int j = i; j <= total; ++j) {
       for (int k = j; k <= total; ++k) {
@@ -863,7 +863,25 @@ int64_t day15_1(ifstream &&in) {
       }
     }
   }
-
+  /*
+  // generalized implementation to test new partition utility
+  partitions(total, ingredients.size(), [&result, &ingredients](vector<size_t> &&part) {
+    int64_t score = 1;
+    for (int i = 0; i < ingredients[0].size(); ++i) {
+      int64_t subscore = 0;
+      for (int j = 0; j < part.size(); ++j) {
+        subscore += ingredients[j][i] * part[j];
+      }
+      if (subscore < 0) {
+        subscore = 0;
+      }
+      score *= subscore;
+    }
+    if (score > result) {
+      result = score;
+    }
+    });
+    */
   return result;
 }
 
