@@ -248,11 +248,11 @@ int64_t day25_2(ifstream &&in) {
 int64_t day1_1(ifstream &&in) {
   int64_t floor = 0;
   char c;
-  while(in >> c) {
-    if(c == '(') {
+  while (in >> c) {
+    if (c == '(') {
       ++floor;
     }
-    if(c == ')') {
+    if (c == ')') {
       --floor;
     }
   }
@@ -263,16 +263,16 @@ int64_t day1_2(ifstream &&in) {
   int64_t floor = 0;
   int64_t step = 0;
   char c;
-  while(in >> c) {
-    if(c == '(') {
+  while (in >> c) {
+    if (c == '(') {
       ++floor;
       ++step;
     }
-    if(c == ')') {
+    if (c == ')') {
       --floor;
       ++step;
     }
-    if(floor < 0) {
+    if (floor < 0) {
       break;
     }
   }
@@ -282,7 +282,7 @@ int64_t day1_2(ifstream &&in) {
 int64_t day2_1(ifstream &&in) {
   int64_t result = 0;
   auto dims = split(split(slurp(in)), "x");
-  for(auto dim : dims) {
+  for (auto dim : dims) {
     auto vals = map_to_num(dim);
     auto a = vals[0] * vals[1];
     auto b = vals[2] * vals[1];
@@ -295,7 +295,7 @@ int64_t day2_1(ifstream &&in) {
 int64_t day2_2(ifstream &&in) {
   int64_t result = 0;
   auto dims = split(split(slurp(in)), "x");
-  for(auto dim : dims) {
+  for (auto dim : dims) {
     auto vals = map_to_num(dim);
     auto a = 2 * (vals[0] + vals[1]);
     auto b = 2 * (vals[1] + vals[2]);
@@ -314,14 +314,14 @@ int64_t day3_1(ifstream &&in) {
   ++result;
 
   char c;
-  while(in >> c) {
-    switch(c) {
+  while (in >> c) {
+    switch (c) {
     case '>': pos[0]++; break;
     case '<': pos[0]--; break;
     case '^': pos[1]++; break;
     case 'v': pos[1]--; break;
     }
-    if(seen.insert(pos).second) {
+    if (seen.insert(pos).second) {
       ++result;
     }
   }
@@ -338,20 +338,20 @@ int64_t day3_2(ifstream &&in) {
   ++result;
 
   char c;
-  while(in >> c) {
-    if(strchr("<>^v", c) == nullptr) {
+  while (in >> c) {
+    if (strchr("<>^v", c) == nullptr) {
       continue;
     }
     auto &pos = both[which % 2];
     ++which;
 
-    switch(c) {
+    switch (c) {
     case '>': pos[0]++; break;
     case '<': pos[0]--; break;
     case '^': pos[1]++; break;
     case 'v': pos[1]--; break;
     }
-    if(seen.insert(pos).second) {
+    if (seen.insert(pos).second) {
       ++result;
     }
   }
@@ -360,10 +360,10 @@ int64_t day3_2(ifstream &&in) {
 
 int64_t day4_1(ifstream &&in) {
   string key = slurp(in);
-  for(int i = 1; ; ++i) {
+  for (int i = 1; ; ++i) {
     string guess = key + to_string(i);
     auto md = MD5((unsigned char *)guess.c_str(), guess.length(), nullptr);
-    if(md[0] + md[1] == 0 && md[2] < 0x10) {
+    if (md[0] + md[1] == 0 && md[2] < 0x10) {
       return i;
     }
   }
@@ -372,10 +372,10 @@ int64_t day4_1(ifstream &&in) {
 
 int64_t day4_2(ifstream &&in) {
   string key = slurp(in);
-  for(int i = 1; ; ++i) {
+  for (int i = 1; ; ++i) {
     string guess = key + to_string(i);
     auto md = MD5((unsigned char *)guess.c_str(), guess.length(), nullptr);
-    if(md[0] + md[1] + md[2] == 0) {
+    if (md[0] + md[1] + md[2] == 0) {
       return i;
     }
   }
@@ -386,23 +386,23 @@ int64_t day5_1(ifstream &&in) {
   int64_t result = 0;
 
   string line;
-  while(getline(in, line)) {
+  while (getline(in, line)) {
     int vowels = 0;
     char last = '\0';
     bool foundPair = false;
-    for(char c : line) {
-      if(strchr("aeiou", c) != nullptr) {
+    for (char c : line) {
+      if (strchr("aeiou", c) != nullptr) {
         vowels++;
       }
-      if(c == last) {
+      if (c == last) {
         foundPair = true;
       }
       last = c;
     }
-    if(vowels < 3 || !foundPair) {
+    if (vowels < 3 || !foundPair) {
       continue;
     }
-    if(line.find("ab") != string::npos ||
+    if (line.find("ab") != string::npos ||
       line.find("cd") != string::npos ||
       line.find("pq") != string::npos ||
       line.find("xy") != string::npos) {
@@ -418,18 +418,18 @@ int64_t day5_2(ifstream &&in) {
   int64_t result = 0;
 
   string line;
-  while(getline(in, line)) {
+  while (getline(in, line)) {
     bool foundPair = false;
     bool foundSplit = false;
-    for(int i = 1; i < line.length(); ++i) {
-      if(line.find(line.substr(i - 1, 2), i + 1) != string::npos) {
+    for (int i = 1; i < line.length(); ++i) {
+      if (line.find(line.substr(i - 1, 2), i + 1) != string::npos) {
         foundPair = true;
       }
-      if(i + 1 < line.length() && line[i - 1] == line[i + 1]) {
+      if (i + 1 < line.length() && line[i - 1] == line[i + 1]) {
         foundSplit = true;
       }
     }
-    if(foundPair && foundSplit) {
+    if (foundPair && foundSplit) {
       ++result;
     }
   }
