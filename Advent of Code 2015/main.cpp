@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 9;
+const int64_t DAY = 10;
 const int64_t PART = 1;
-
-int64_t day9_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day9_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day10_1(ifstream &&in) {
   int64_t result = 0;
@@ -584,6 +572,62 @@ int64_t day8_2(ifstream &&in) {
       }
     }
   }
+  return result;
+}
+
+// travelling salesman, given distances between pairs, what's the shortest route hitting them all?
+int64_t day9_1(ifstream &&in) {
+  unordered_map<string, unordered_map<string, int64_t>> costs = {};
+  vector<string> cities = {};
+  for (auto tokens : split(split(slurp(in)), " ")) {
+    if (!costs.contains(tokens[0])) {
+      cities.push_back(tokens[0]);
+    }
+    if (!costs.contains(tokens[2])) {
+      cities.push_back(tokens[2]);
+    }
+    costs[tokens[0]][tokens[2]] = costs[tokens[2]][tokens[0]] = stoll(tokens[4]);
+  }
+
+  int64_t result = 0;
+  for (auto perm : permutations(cities.size())) {
+    int64_t dist = 0;
+    for (int i = 0; i < perm.size() - 1; ++i) {
+      dist += costs[cities[perm[i]]][cities[perm[i + 1]]];
+    }
+    if (result == 0 || dist < result) {
+      result = dist;
+    }
+  }
+
+  return result;
+}
+
+// what's the longest?
+int64_t day9_2(ifstream &&in) {
+  unordered_map<string, unordered_map<string, int64_t>> costs = {};
+  vector<string> cities = {};
+  for (auto tokens : split(split(slurp(in)), " ")) {
+    if (!costs.contains(tokens[0])) {
+      cities.push_back(tokens[0]);
+    }
+    if (!costs.contains(tokens[2])) {
+      cities.push_back(tokens[2]);
+    }
+    costs[tokens[0]][tokens[2]] = costs[tokens[2]][tokens[0]] = stoll(tokens[4]);
+  }
+
+  int64_t result = 0;
+  for (auto perm : permutations(cities.size())) {
+    int64_t dist = 0;
+    for (int i = 0; i < perm.size() - 1; ++i) {
+      dist += costs[cities[perm[i]]][cities[perm[i + 1]]];
+    }
+    if (dist > result) {
+      result = dist;
+    }
+  }
+
   return result;
 }
 
