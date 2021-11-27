@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 5;
+const int64_t DAY = 6;
 const int64_t PART = 1;
-
-int64_t day5_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day5_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day6_1(ifstream &&in) {
   int64_t result = 0;
@@ -392,6 +380,61 @@ int64_t day4_2(ifstream &&in) {
     }
   }
   return -1;
+}
+
+int64_t day5_1(ifstream &&in) {
+  int64_t result = 0;
+
+  string line;
+  while(getline(in, line)) {
+    int vowels = 0;
+    char last = '\0';
+    bool foundPair = false;
+    for(char c : line) {
+      if(strchr("aeiou", c) != nullptr) {
+        vowels++;
+      }
+      if(c == last) {
+        foundPair = true;
+      }
+      last = c;
+    }
+    if(vowels < 3 || !foundPair) {
+      continue;
+    }
+    if(line.find("ab") != string::npos ||
+      line.find("cd") != string::npos ||
+      line.find("pq") != string::npos ||
+      line.find("xy") != string::npos) {
+      continue;
+    }
+    ++result;
+  }
+
+  return result;
+}
+
+int64_t day5_2(ifstream &&in) {
+  int64_t result = 0;
+
+  string line;
+  while(getline(in, line)) {
+    bool foundPair = false;
+    bool foundSplit = false;
+    for(int i = 1; i < line.length(); ++i) {
+      if(line.find(line.substr(i - 1, 2), i + 1) != string::npos) {
+        foundPair = true;
+      }
+      if(i + 1 < line.length() && line[i - 1] == line[i + 1]) {
+        foundSplit = true;
+      }
+    }
+    if(foundPair && foundSplit) {
+      ++result;
+    }
+  }
+
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
