@@ -713,7 +713,7 @@ int64_t day12_2(ifstream &&in) {
 
 // given preferences for seating partners, maximize happiness
 int64_t day13_1(ifstream &&in) {
-  map<string, map<string, int>> prefs = {};
+  map<string, map<string, int64_t>> prefs = {};
   vector<string> names = {};
   for (auto tokens : split(split(slurp(in)), "[ \\.]")) {
     auto value = stoll(tokens[3]);
@@ -744,7 +744,7 @@ int64_t day13_1(ifstream &&in) {
 
 // now include yourself, who is and elicits complete ambivalence
 int64_t day13_2(ifstream &&in) {
-  map<string, map<string, int>> prefs = {};
+  map<string, map<string, int64_t>> prefs = {};
   vector<string> names = {"yourself"};
   for (auto tokens : split(split(slurp(in)), "[ \\.]")) {
     auto value = stoll(tokens[3]);
@@ -784,8 +784,8 @@ int64_t day14_1(ifstream &&in) {
     auto duration = stoll(tokens[6]);
     auto rest = stoll(tokens[13]);
 
-    int elapsed = 0;
-    int distance = 0;
+    int64_t elapsed = 0;
+    int64_t distance = 0;
     while (elapsed < total) {
       distance += speed * duration;
       elapsed += duration;
