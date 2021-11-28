@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 22;
+const int64_t DAY = 23;
 const int64_t PART = 1;
-
-int64_t day22_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day22_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day23_1(ifstream &&in) {
   int64_t result = 0;
@@ -1335,6 +1323,124 @@ int64_t day21_2(ifstream &&in) {
           }
         }
       }
+    }
+  }
+}
+
+struct day22_state {
+  int player = 50;
+  int player_mana = 500;
+  int player_armor = 0;
+
+  int boss;
+  int boss_damage;
+
+  int shield = 0;
+  int poison = 0;
+  int recharge = 0;
+
+  bool player_turn = true;
+};
+
+bool day22_fight(int budget, day22_state state, bool part2 = false) {
+  if (state.player_turn && part2) {
+    --state.player;
+    if (state.player <= 0) {
+      return false;
+    }
+  }
+
+  if (state.shield > 0) {
+    --state.shield;
+    if (state.shield == 0) {
+      state.player_armor = 0;
+    }
+  }
+  if (state.poison > 0) {
+    --state.poison;
+    state.boss -= 3;
+    if (state.boss <= 0) {
+      return true;
+    }
+  }
+  if (state.recharge > 0) {
+    --state.recharge;
+    state.player_mana += 101;
+  }
+
+  if (!state.player_turn) {
+    state.player -= max(state.boss_damage - state.player_armor, 1);
+    if (state.player <= 0) {
+      return false;
+    }
+    state.player_turn = true;
+    return day22_fight(budget, state, part2);
+  }
+
+  struct spell {
+    string name;
+    int mana;
+  };
+
+  static vector<spell> spells = {
+    {"Magic Missile", 53},
+    {"Drain", 73},
+    {"Shield", 113},
+    {"Poison", 173},
+    {"Recharge", 229},
+  };
+
+  for (int i = 0; i < spells.size(); ++i) {
+    if (spells[i].mana <= budget && spells[i].mana <= state.player_mana) {
+      auto next_state = state;
+      next_state.player_turn = false;
+      next_state.player_mana -= spells[i].mana;
+      if (spells[i].name == "Magic Missile") {
+        next_state.boss -= 4;
+      } else if (spells[i].name == "Drain") {
+        next_state.player += 2;
+        next_state.boss -= 2;
+      } else if (state.shield == 0 && spells[i].name == "Shield") {
+        next_state.shield = 6;
+        next_state.player_armor = 7;
+      } else if (state.poison == 0 && spells[i].name == "Poison") {
+        next_state.poison = 6;
+      } else if (state.recharge == 0 && spells[i].name == "Recharge") {
+        next_state.recharge = 5;
+      }
+      if (next_state.boss <= 0) {
+        return true;
+      }
+      if (day22_fight(budget - spells[i].mana, next_state, part2)) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+// rpg simulator; try every combination of spells to find the minimum budget to win
+int64_t day22_1(ifstream &&in) {
+  string line;
+  const int boss_hp = (getline(in, line), stol(split(line, " ")[2]));
+  const int boss_damage = (getline(in, line), stol(split(line, " ")[1]));
+
+  for (int budget = 53; ; ++budget) {
+    if (day22_fight(budget, {.boss = boss_hp, .boss_damage = boss_damage})) {
+      return budget;
+    }
+  }
+}
+
+// same, but hard mode - take damage every turn
+int64_t day22_2(ifstream &&in) {
+  string line;
+  const int boss_hp = (getline(in, line), stol(split(line, " ")[2]));
+  const int boss_damage = (getline(in, line), stol(split(line, " ")[1]));
+
+  for (int budget = 53; ; ++budget) {
+    if (day22_fight(budget, {.boss = boss_hp, .boss_damage = boss_damage}, true)) {
+      return budget;
     }
   }
 }
