@@ -39,6 +39,19 @@ void permutations(size_t n, function<void(vector<size_t>&&)> callback);
 vector<vector<size_t>> partitions(size_t max, size_t count);
 void partitions(size_t max, size_t count, function<void(vector<size_t> &&)> callback);
 
+struct prime_factor_t {
+	int64_t p;
+	int count;
+};
+
+// calls the callback on each prime in order; return true when done
+void primes(function<bool(int64_t)> callback);
+vector<prime_factor_t> prime_factors(int64_t num);
+vector<int64_t> factorize(int64_t num);
+
+int64_t sum(vector<int64_t> vec);
+int64_t product(vector<int64_t> vec);
+
 template <typename T, typename C>
 unordered_map<T, int> histogram(C container) {
 	unordered_map<T, int> result;

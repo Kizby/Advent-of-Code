@@ -127,6 +127,96 @@ void partitions(size_t max, size_t count, function<void(vector<size_t> &&)> call
 	}
 }
 
+void primes(function<bool(int64_t)> callback) {
+	static vector<int64_t> prime_cache = {2, 3};
+
+	for (int i = 0; i < prime_cache.size(); ++i) {
+		if (callback(prime_cache[i])) {
+			return;
+		}
+	}
+
+	bool done = false;
+	for (int64_t next = prime_cache[prime_cache.size() - 1] + 2; !done; next += 2) {
+		bool is_prime = true;
+		for (auto i = 1; i < prime_cache.size() && prime_cache[i] * prime_cache[i] <= next; ++i) {
+			if (next % prime_cache[i] == 0) {
+				is_prime = false;
+				break;
+			}
+		}
+		if (is_prime) {
+			prime_cache.push_back(next);
+			done = callback(next);
+		}
+	}
+}
+
+vector<prime_factor_t> prime_factors(int64_t num) {
+	vector<prime_factor_t> result = {};
+	int64_t work = num;
+	primes([&result, &work](int64_t p) {
+		if (p * p > work) {
+			if (work > 1) {
+				result.push_back({.p = work, .count = 1});
+			}
+			return true;
+		}
+
+		int count = 0;
+		while (work % p == 0) {
+			++count;
+			work /= p;
+		}
+		result.push_back({p, count});
+		return false;
+		});
+	return result;
+}
+
+vector<int64_t> factorize(int64_t num) {
+	vector<int64_t> result = {};
+	auto primes = prime_factors(num);
+	vector<int> counts(primes.size());
+	bool done = false;
+	while (!done) {
+		int64_t next = 1;
+		for (int i = 0; i < counts.size(); ++i) {
+			for (int j = 0; j < counts[i]; ++j) {
+				next *= primes[i].p;
+			}
+		}
+		result.push_back(next);
+
+		done = true;
+		for (int i = 0; i < counts.size(); ++i) {
+			if (counts[i] < primes[i].count) {
+				++counts[i];
+				done = false;
+				break;
+			}
+			counts[i] = 0;
+		}
+	}
+	return result;
+}
+
+int64_t sum(vector<int64_t> vec) {
+	int64_t result = 0;
+	for (int i = 0; i < vec.size(); ++i) {
+		result += vec[i];
+	}
+	return result;
+}
+
+int64_t product(vector<int64_t> vec) {
+	int64_t result = 1;
+	for (int i = 0; i < vec.size(); ++i) {
+		result *= vec[i];
+	}
+	return result;
+}
+
 void copy(string s)
 {
 	if (s.size() > 200) {
