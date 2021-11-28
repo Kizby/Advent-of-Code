@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 23;
+const int64_t DAY = 24;
 const int64_t PART = 1;
-
-int64_t day23_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day23_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day24_1(ifstream &&in) {
   int64_t result = 0;
@@ -1443,6 +1431,102 @@ int64_t day22_2(ifstream &&in) {
       return budget;
     }
   }
+}
+
+// implement a simple computer; code computes number of steps in a collatz sequence
+int64_t day23_1(ifstream &&in) {
+  struct {
+    int64_t a;
+    int64_t b;
+    size_t pos;
+  } state = {};
+  struct instruction_t {
+    string op;
+    string in1;
+    string in2;
+  };
+  vector<instruction_t> instructions = {};
+  for (auto tokens : split(split(slurp(in)), ",? ")) {
+    instruction_t inst = {tokens[0], tokens[1], tokens.size() > 2 ? tokens[2] : ""};
+    instructions.push_back(inst);
+    //cout << inst.op << " " << inst.in1 << ", " << inst.in2 << endl;
+  }
+
+  while (state.pos >= 0 && state.pos < instructions.size()) {
+    //cout << "a: " << state.a << ", b: " << state.b << ", pos: " << state.pos << endl;
+    auto inst = instructions[state.pos++];
+    if (inst.op == "hlf") {
+      auto &which = inst.in1 == "a" ? state.a : state.b;
+      which /= 2;
+    } else if (inst.op == "tpl") {
+      auto &which = inst.in1 == "a" ? state.a : state.b;
+      which *= 3;
+    } else if (inst.op == "inc") {
+      auto &which = inst.in1 == "a" ? state.a : state.b;
+      ++which;
+    } else if (inst.op == "jmp") {
+      state.pos = state.pos - 1 + stol(inst.in1);
+    } else if (inst.op == "jie") {
+      auto &which = inst.in1 == "a" ? state.a : state.b;
+      if (which % 2 == 0) {
+        state.pos = state.pos - 1 + stol(inst.in2);
+      }
+    } else if (inst.op == "jio") {
+      auto &which = inst.in1 == "a" ? state.a : state.b;
+      if (which == 1) {
+        state.pos = state.pos - 1 + stol(inst.in2);
+      }
+    }
+  }
+  return state.b;
+}
+
+// different starting value
+int64_t day23_2(ifstream &&in) {
+  struct {
+    int64_t a;
+    int64_t b;
+    size_t pos;
+  } state = {.a = 1};
+  struct instruction_t {
+    string op;
+    string in1;
+    string in2;
+  };
+  vector<instruction_t> instructions = {};
+  for (auto tokens : split(split(slurp(in)), ",? ")) {
+    instruction_t inst = {tokens[0], tokens[1], tokens.size() > 2 ? tokens[2] : ""};
+    instructions.push_back(inst);
+    //cout << inst.op << " " << inst.in1 << ", " << inst.in2 << endl;
+  }
+
+  while (state.pos >= 0 && state.pos < instructions.size()) {
+    //cout << "a: " << state.a << ", b: " << state.b << ", pos: " << state.pos << endl;
+    auto inst = instructions[state.pos++];
+    if (inst.op == "hlf") {
+      auto &which = inst.in1 == "a" ? state.a : state.b;
+      which /= 2;
+    } else if (inst.op == "tpl") {
+      auto &which = inst.in1 == "a" ? state.a : state.b;
+      which *= 3;
+    } else if (inst.op == "inc") {
+      auto &which = inst.in1 == "a" ? state.a : state.b;
+      ++which;
+    } else if (inst.op == "jmp") {
+      state.pos = state.pos - 1 + stol(inst.in1);
+    } else if (inst.op == "jie") {
+      auto &which = inst.in1 == "a" ? state.a : state.b;
+      if (which % 2 == 0) {
+        state.pos = state.pos - 1 + stol(inst.in2);
+      }
+    } else if (inst.op == "jio") {
+      auto &which = inst.in1 == "a" ? state.a : state.b;
+      if (which == 1) {
+        state.pos = state.pos - 1 + stol(inst.in2);
+      }
+    }
+  }
+  return state.b;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
