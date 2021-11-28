@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 20;
+const int64_t DAY = 21;
 const int64_t PART = 1;
-
-int64_t day20_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day20_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day21_1(ifstream &&in) {
   int64_t result = 0;
@@ -1114,6 +1102,38 @@ int64_t day19_2(ifstream &&in) {
     }
   }
   return result;
+}
+
+// what's the least number whose sum of factors exceeds one-tenth the target
+int64_t day20_1(ifstream &&in) {
+  int64_t target = stoll(slurp(in)) / 10;
+  for (int64_t i = 1; ; ++i) {
+    int64_t result = sum(factorize(i));
+    if (result >= target) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+// now only factors within a factor of 50 of the number, and one-eleventh the target
+int64_t day20_2(ifstream &&in) {
+  int64_t target = stoll(slurp(in)) / 11;
+  for (int64_t i = 1; ; ++i) {
+    int64_t result = 0;
+    auto factors = factorize(i);
+    for (int j = 0; j < factors.size(); ++j) {
+      if (i / factors[j] <= 50) {
+        result += factors[j];
+      }
+    }
+    if (result >= target) {
+      return i;
+    }
+  }
+
+  return -1;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
