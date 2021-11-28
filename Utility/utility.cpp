@@ -217,6 +217,20 @@ int64_t product(vector<int64_t> vec) {
 	return result;
 }
 
+vector<vector<int64_t>> choose(int64_t n, int64_t k) {
+	if (k == 0) {
+		return {{}};
+	}
+	vector<vector<int64_t>> result = {};
+	for (int64_t i = n - k; i >= 0; --i) {
+		for (auto c : choose(i, k - 1)) {
+			c.push_back(i);
+			result.push_back(c);
+		}
+	}
+	return result;
+}
+
 void copy(string s)
 {
 	if (s.size() > 200) {

@@ -52,6 +52,8 @@ vector<int64_t> factorize(int64_t num);
 int64_t sum(vector<int64_t> vec);
 int64_t product(vector<int64_t> vec);
 
+vector<vector<int64_t>> choose(int64_t n, int64_t k);
+
 template <typename T, typename C>
 unordered_map<T, int> histogram(C container) {
 	unordered_map<T, int> result;
