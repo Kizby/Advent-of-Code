@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 25;
+const int64_t DAY = 1;
 const int64_t PART = 1;
-
-int64_t day25_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day25_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 // if each ( goes up one floor and each ) goes down one floor, what floor do we end up on?
 int64_t day1_1(ifstream &&in) {
@@ -1603,6 +1591,33 @@ int64_t day24_2(ifstream &&in) {
       return result;
     }
   }
+}
+
+// get the nth iteration of a pseudorandom number generator
+int64_t day25_1(ifstream &&in) {
+  string line;
+  getline(in, line);
+  int row = stol(split(line, "[,. ]+")[15]);
+  int col = stol(split(line, "[,. ]+")[17]);
+
+  // magic (first row has triangular numbers, then col beyond the first-row entry just before our diagonal)
+  auto which = col;
+  for (int i = 1; i < col + row - 1; ++i) {
+    which += i;
+  }
+
+  int64_t code = 20151125;
+  for (int i = 1; i < which; ++i) {
+    code = (code * 252533) % 33554393;
+  };
+
+  return code;
+}
+
+int64_t day25_2(ifstream &&in) {
+  int64_t result = 0;
+
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
