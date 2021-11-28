@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 21;
+const int64_t DAY = 22;
 const int64_t PART = 1;
-
-int64_t day21_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day21_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day22_1(ifstream &&in) {
   int64_t result = 0;
@@ -1134,6 +1122,221 @@ int64_t day20_2(ifstream &&in) {
   }
 
   return -1;
+}
+
+// rpg simulator; what's the cheapest loadout that beats the boss?
+int64_t day21_1(ifstream &&in) {
+  string line;
+  const int boss_hp = (getline(in, line), stoll(split(line, " ")[2]));
+  const int boss_damage = (getline(in, line), stoll(split(line, " ")[1]));
+  const int boss_armor = (getline(in, line), stoll(split(line, " ")[1]));
+
+  struct item_t {
+    string name;
+    int cost;
+    int damage;
+    int armor;
+  };
+  vector<item_t> weapons = {
+    {"Dagger", 8, 4, 0},
+    {"Shortsword", 10, 5, 0},
+    {"Warhammar", 25, 6, 0},
+    {"Longsword", 40, 7, 0},
+    {"Greataxe", 74, 8, 0},
+  };
+  vector<item_t> armors = {
+    {"Leather", 13, 0, 1},
+    {"Chainmail", 31, 0, 2},
+    {"Splintmail", 53, 0, 3},
+    {"Bandedmail", 75, 0, 4},
+    {"Platemail", 102, 0, 5},
+  };
+  vector<item_t> rings = {
+    {"Damage +1", 25, 1, 0},
+    {"Damage +2", 50, 2, 0},
+    {"Damage +3", 100, 3, 0},
+    {"Defense +1", 20, 0, 1},
+    {"Defense +2", 40, 0, 2},
+    {"Defense +3", 80, 0, 3},
+  };
+  for (int budget = 8; ; ++budget) {
+    int gold = budget;
+    int damage = 0;
+    int armor = 0;
+    for (int w = 0; w < weapons.size(); ++w) {
+      // for each weapon choice
+      int goldwc = gold - weapons[w].cost;
+      if (goldwc < 0) {
+        continue;
+      }
+      for (int ac = 0; ac <= 1; ++ac) {
+        // for each armor count
+        for (auto as : choose(armors.size(), ac)) {
+          int goldac = goldwc;
+          for (auto a : as) {
+            goldac -= armors[a].cost;
+          }
+          if (goldac < 0) {
+            continue;
+          }
+          for (int rc = 0; rc <= 2; ++rc) {
+            // for each ring count
+            for (auto rs : choose(rings.size(), rc)) {
+              int goldrc = goldac;
+              for (auto r : rs) {
+                goldrc -= rings[r].cost;
+              }
+              if (goldrc < 0) {
+                continue;
+              }
+              auto total_damage = weapons[w].damage;
+              auto total_armor = 0;
+              for (auto a : as) {
+                total_armor += armors[a].armor;
+              }
+              for (auto r : rs) {
+                total_damage += rings[r].damage;
+                total_armor += rings[r].armor;
+              }
+
+              // simulate
+              auto boss = boss_hp;
+              auto player = 100;
+              while (player > 0) {
+                boss -= max(total_damage - boss_armor, 1);
+                if (boss <= 0) {
+                  cout << "Weapon: " << weapons[w].name << endl;
+                  cout << "Armor:";
+                  if (ac > 0) {
+                    cout << " " << armors[as[0]].name;
+                  }
+                  cout << endl << "Rings:";
+                  if (rc > 0) {
+                    cout << " " << rings[rs[0]].name;
+                  }
+                  if (rc > 1) {
+                    cout << ", " << rings[rs[1]].name;
+                  }
+                  cout << endl;
+                  return budget;
+                }
+                player -= max(boss_damage - total_armor, 1);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// what's the most expensive loadout that doesn't beat the boss?
+int64_t day21_2(ifstream &&in) {
+  string line;
+  const int boss_hp = (getline(in, line), stoll(split(line, " ")[2]));
+  const int boss_damage = (getline(in, line), stoll(split(line, " ")[1]));
+  const int boss_armor = (getline(in, line), stoll(split(line, " ")[1]));
+
+  struct item_t {
+    string name;
+    int cost;
+    int damage;
+    int armor;
+  };
+  vector<item_t> weapons = {
+    {"Dagger", 8, 4, 0},
+    {"Shortsword", 10, 5, 0},
+    {"Warhammar", 25, 6, 0},
+    {"Longsword", 40, 7, 0},
+    {"Greataxe", 74, 8, 0},
+  };
+  vector<item_t> armors = {
+    {"Leather", 13, 0, 1},
+    {"Chainmail", 31, 0, 2},
+    {"Splintmail", 53, 0, 3},
+    {"Bandedmail", 75, 0, 4},
+    {"Platemail", 102, 0, 5},
+  };
+  vector<item_t> rings = {
+    {"Damage +1", 25, 1, 0},
+    {"Damage +2", 50, 2, 0},
+    {"Damage +3", 100, 3, 0},
+    {"Defense +1", 20, 0, 1},
+    {"Defense +2", 40, 0, 2},
+    {"Defense +3", 80, 0, 3},
+  };
+  for (int budget = 356; budget >= 8; --budget) {
+    int gold = budget;
+    int damage = 0;
+    int armor = 0;
+    for (int w = 0; w < weapons.size(); ++w) {
+      // for each weapon choice
+      int goldwc = gold - weapons[w].cost;
+      if (goldwc < 0) {
+        continue;
+      }
+      for (int ac = 0; ac <= 1; ++ac) {
+        // for each armor count
+        for (auto as : choose(armors.size(), ac)) {
+          int goldac = goldwc;
+          for (auto a : as) {
+            goldac -= armors[a].cost;
+          }
+          if (goldac < 0) {
+            continue;
+          }
+          for (int rc = 0; rc <= 2; ++rc) {
+            // for each ring count
+            for (auto rs : choose(rings.size(), rc)) {
+              int goldrc = goldac;
+              for (auto r : rs) {
+                goldrc -= rings[r].cost;
+              }
+              if (goldrc != 0) {
+                continue;
+              }
+              auto total_damage = weapons[w].damage;
+              auto total_armor = 0;
+              for (auto a : as) {
+                total_armor += armors[a].armor;
+              }
+              for (auto r : rs) {
+                total_damage += rings[r].damage;
+                total_armor += rings[r].armor;
+              }
+
+              // simulate
+              auto boss = boss_hp;
+              auto player = 100;
+              while (true) {
+                boss -= max(total_damage - boss_armor, 1);
+                if (boss <= 0) {
+                  break;
+                }
+                player -= max(boss_damage - total_armor, 1);
+                if (player <= 0) {
+                  cout << "Weapon: " << weapons[w].name << endl;
+                  cout << "Armor:";
+                  if (ac > 0) {
+                    cout << " " << armors[as[0]].name;
+                  }
+                  cout << endl << "Rings:";
+                  if (rc > 0) {
+                    cout << " " << rings[rs[0]].name;
+                  }
+                  if (rc > 1) {
+                    cout << ", " << rings[rs[1]].name;
+                  }
+                  cout << endl;
+                  return gold;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
