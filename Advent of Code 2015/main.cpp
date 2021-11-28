@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 24;
+const int64_t DAY = 25;
 const int64_t PART = 1;
-
-int64_t day24_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day24_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day25_1(ifstream &&in) {
   int64_t result = 0;
@@ -1527,6 +1515,94 @@ int64_t day23_2(ifstream &&in) {
     }
   }
   return state.b;
+}
+
+void day24_recurse(vector<int64_t> &goals, int64_t first_left, int64_t taken, function<void(vector<int64_t>)> callback, const vector<int64_t> &weights) {
+  if (first_left == 0 && goals[0] > 0) {
+    return;
+  }
+  if (sum(goals) == 0) {
+    callback({});
+    return;
+  }
+
+  // pick the next weight
+  for (int64_t i = weights.size() - 1; i >= 0; --i) {
+    auto mask = 1 << i;
+    if (taken & mask) {
+      continue;
+    }
+    for (int j = 0; j < goals.size(); ++j) {
+      if (goals[j] >= weights[i]) {
+        goals[j] -= weights[i];
+        if (j == 0) --first_left;
+        taken |= mask;
+        bool done = false;
+
+        day24_recurse(goals, first_left, taken, [callback, i, j, &done, &weights](vector<int64_t> vec) {
+          if (j == 0) {
+            vec.push_back(weights[i]);
+          } else {
+            done = true; // only care about solvability outside the first sled, not the solutions
+          }
+          callback(vec);
+          }, weights);
+
+        taken &= ~mask;
+        if (j == 0) ++first_left;
+        goals[j] += weights[i];
+
+        if (done) {
+          return;
+        }
+      }
+      if (goals[j] > 0) {
+        // fill earlier compartments first
+        break;
+      }
+    }
+  }
+}
+
+// partition given elements into three equal weight sets; find the minimum product of the minimum-size load of the first set
+int64_t day24_1(ifstream &&in) {
+  auto weights = map_to_num(split(slurp(in)));
+  auto target = sum(weights) / 3;
+  vector<int64_t> goals = {target, target};
+
+  int64_t result = 0;
+  for (int i = 1; ; ++i) {
+    //cout << "Trying " << i << " packages in passenger compartment." << endl;
+    day24_recurse(goals, i, 0, [&result](vector<int64_t> vec) {
+      report(product(vec)); // as it happens, the first one we hit is minimal
+      exit(0);
+      }, weights);
+    if (result != 0) {
+      return result;
+    }
+  }
+}
+
+// now four equal weight sets
+int64_t day24_2(ifstream &&in) {
+  auto weights = map_to_num(split(slurp(in)));
+  auto target = sum(weights) / 4;
+  vector<int64_t> goals = {target, target, target};
+
+  int64_t result = 0;
+  for (int i = 1; ; ++i) {
+    //cout << "Trying " << i << " packages in passenger compartment." << endl;
+    day24_recurse(goals, i, 0, [&result](vector<int64_t> vec) {
+      auto qe = product(vec);
+      if (result == 0 || qe < result) {
+        result = qe;
+        //cout << qe << endl;
+      }
+      }, weights);
+    if (result != 0) {
+      return result;
+    }
+  }
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
