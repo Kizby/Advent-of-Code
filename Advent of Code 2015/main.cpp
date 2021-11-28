@@ -1127,9 +1127,9 @@ int64_t day20_2(ifstream &&in) {
 // rpg simulator; what's the cheapest loadout that beats the boss?
 int64_t day21_1(ifstream &&in) {
   string line;
-  const int boss_hp = (getline(in, line), stoll(split(line, " ")[2]));
-  const int boss_damage = (getline(in, line), stoll(split(line, " ")[1]));
-  const int boss_armor = (getline(in, line), stoll(split(line, " ")[1]));
+  const int boss_hp = (getline(in, line), stol(split(line, " ")[2]));
+  const int boss_damage = (getline(in, line), stol(split(line, " ")[1]));
+  const int boss_armor = (getline(in, line), stol(split(line, " ")[1]));
 
   struct item_t {
     string name;
@@ -1233,9 +1233,9 @@ int64_t day21_1(ifstream &&in) {
 // what's the most expensive loadout that doesn't beat the boss?
 int64_t day21_2(ifstream &&in) {
   string line;
-  const int boss_hp = (getline(in, line), stoll(split(line, " ")[2]));
-  const int boss_damage = (getline(in, line), stoll(split(line, " ")[1]));
-  const int boss_armor = (getline(in, line), stoll(split(line, " ")[1]));
+  const int boss_hp = (getline(in, line), stol(split(line, " ")[2]));
+  const int boss_damage = (getline(in, line), stol(split(line, " ")[1]));
+  const int boss_armor = (getline(in, line), stol(split(line, " ")[1]));
 
   struct item_t {
     string name;
