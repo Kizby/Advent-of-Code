@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 1;
+const int64_t DAY = 2;
 const int64_t PART = 1;
-
-int64_t day1_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day1_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day2_1(ifstream &&in) {
   int64_t result = 0;
@@ -303,6 +291,36 @@ int64_t day25_2(ifstream &&in) {
   int64_t result = 0;
 
   return result;
+}
+
+// how many measurements are higher than the previous one?
+int64_t day1_1(ifstream &&in) {
+  int last = 0;
+  int count = 0;
+  for (auto a : map_to_num(split(slurp(in)))) {
+    if (a > last) {
+      ++count;
+    }
+    last = a;
+  }
+  return count - 1;
+}
+
+// now with a three-day sliding window
+int64_t day1_2(ifstream &&in) {
+  vector<int64_t> last = {0, 0, 0};
+  int count = 0;
+  int pos = 0;
+  int prev = 0;
+  for (auto a : map_to_num(split(slurp(in)))) {
+    last[pos++ % 3] = a;
+    if (pos > 3 && sum(last) > prev) {
+      ++count;
+    }
+    prev = sum(last);
+    //cout << prev << endl;
+  }
+  return count;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
