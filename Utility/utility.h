@@ -33,6 +33,7 @@ vs split(const string& input, const string& regex = "\n");
 vector<vs> split(const vs& input, const string& regex = "\n");
 
 vi map_to_num(const vs& vec);
+vi get_nums(ifstream &in, const string& regex = "\n");
 
 vector<vz> permutations(size_t start, size_t end);
 vector<vz> permutations(size_t n);

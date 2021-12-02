@@ -76,6 +76,10 @@ vi map_to_num(const vs& vec) {
 	return result;
 }
 
+vi get_nums(ifstream &in, const string &regex) {
+	return map_to_num(split(slurp(in), regex));
+}
+
 vector<vz> permutations(size_t start, size_t end) {
 	vector<vz> result;
 	permutations(start, end, [&result](vz &&vec) {
