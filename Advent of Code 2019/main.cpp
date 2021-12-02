@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 1;
+const int64_t DAY = 2;
 const int64_t PART = 1;
-
-int64_t day1_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day1_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day2_1(ifstream &&in) {
   int64_t result = 0;
@@ -301,6 +289,32 @@ int64_t day25_1(ifstream &&in) {
 
 int64_t day25_2(ifstream &&in) {
   int64_t result = 0;
+
+  return result;
+}
+
+// sum of (m/3)-2 for a set of masses
+int64_t day1_1(ifstream &&in) {
+  int64_t result = 0;
+  auto nums = map_to_num(split(slurp(in)));
+  for (auto num : nums) {
+    result += (num / 3) - 2;
+  }
+
+  return result;
+}
+
+// additionally, each unit of fuel calculated above needs fuel for itself recursively
+int64_t day1_2(ifstream &&in) {
+  int64_t result = 0;
+  auto nums = map_to_num(split(slurp(in)));
+  for (auto num : nums) {
+    auto mass = (num / 3) - 2;
+    while (mass > 0) {
+      result += mass;
+      mass = (mass / 3) - 2;
+    }
+  }
 
   return result;
 }
