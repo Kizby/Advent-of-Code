@@ -56,6 +56,8 @@ vi factorize(int64_t num);
 
 int64_t sum(vi vec);
 int64_t product(vi vec);
+int64_t min(vi vec);
+int64_t max(vi vec);
 
 vector<vi> choose(int64_t n, int64_t k);
 

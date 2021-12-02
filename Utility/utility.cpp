@@ -221,6 +221,26 @@ int64_t product(vi vec) {
 	return result;
 }
 
+int64_t min(vi vec) {
+	int64_t result = vec[0];
+	for (int i = 1; i < vec.size(); ++i) {
+		if (vec[i] < result) {
+			result = vec[i];
+		}
+	}
+	return result;
+}
+
+int64_t max(vi vec) {
+	int64_t result = vec[0];
+	for (int i = 1; i < vec.size(); ++i) {
+		if (vec[i] > result) {
+			result = vec[i];
+		}
+	}
+	return result;
+}
+
 vector<vi> choose(int64_t n, int64_t k) {
 	if (k == 0) {
 		return {{}};
