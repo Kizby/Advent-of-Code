@@ -311,6 +311,7 @@ int64_t day1_2(ifstream &&in) {
   return count;
 }
 
+// parse forward/up/down directions to find the final position of the submarine
 int64_t day2_1(ifstream &&in) {
   string line;
   vector<int64_t> pos = {0, 0};
@@ -327,6 +328,7 @@ int64_t day2_1(ifstream &&in) {
   return result;
 }
 
+// reinterpret up and down as changing the "aim" of the sub
 int64_t day2_2(ifstream &&in) {
   string line;
   vector<int64_t> pos = {0, 0};
