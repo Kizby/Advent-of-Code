@@ -47,7 +47,7 @@ ifstream input(int year, int day) {
 }
 
 // from https://stackoverflow.com/a/9437426
-vector<string> split(const string& input, const string& regex) {
+vs split(const string& input, const string& regex) {
 	// passing -1 as the submatch index parameter performs splitting
 	std::regex re(regex);
 	sregex_token_iterator
@@ -56,10 +56,10 @@ vector<string> split(const string& input, const string& regex) {
 	return { first, last };
 }
 
-vector<vector<string>> split(const vector<string>& input, const string& regex) {
+vector<vs> split(const vs& input, const string& regex) {
 	// passing -1 as the submatch index parameter performs splitting
 	std::regex re(regex);
-	vector<vector<string>> result;
+	vector<vs> result;
 	for (const auto& line : input) {
 		sregex_token_iterator
 			first{ line.begin(), line.end(), re, -1 },
@@ -69,31 +69,31 @@ vector<vector<string>> split(const vector<string>& input, const string& regex) {
 	return result;
 }
 
-vector<int64_t> map_to_num(const vector<string>& vec) {
-	vector<int64_t> result;
+vi map_to_num(const vs& vec) {
+	vi result;
 	result.resize(vec.size());
 	transform(vec.begin(), vec.end(), result.begin(), [](const string& s) { return s.empty() ? 0 : stoll(s); });
 	return result;
 }
 
-vector<vector<size_t>> permutations(size_t start, size_t end) {
-	vector<vector<size_t>> result;
-	permutations(start, end, [&result](vector<size_t> &&vec) {
+vector<vz> permutations(size_t start, size_t end) {
+	vector<vz> result;
+	permutations(start, end, [&result](vz &&vec) {
 		result.push_back(move(vec));
 		});
 	return result;
 }
 
-vector<vector<size_t>> permutations(size_t n) {
+vector<vz> permutations(size_t n) {
 	return permutations(0, n);
 }
 
-void permutations(size_t start, size_t end, function<void(vector<size_t>&&)> callback) {
+void permutations(size_t start, size_t end, function<void(vz&&)> callback) {
 	if (start >= end) {
 		callback({});
 		return;
 	}
-	permutations(start, end - 1, [end, callback](vector<size_t> &&base) {
+	permutations(start, end - 1, [end, callback](vz &&base) {
 		for (int i = 0; i <= base.size(); ++i) {
 			auto next = base;
 			next.insert(next.begin() + i, end - 1);
@@ -102,25 +102,25 @@ void permutations(size_t start, size_t end, function<void(vector<size_t>&&)> cal
 		});
 }
 
-void permutations(size_t n, function<void(vector<size_t>&&)> callback) {
+void permutations(size_t n, function<void(vz&&)> callback) {
 	permutations(0, n, callback);
 }
 
-vector<vector<size_t>> partitions(size_t max, size_t count) {
-	vector<vector<size_t>> result;
-	partitions(max, count, [&result](vector<size_t> &&vec) {
+vector<vz> partitions(size_t max, size_t count) {
+	vector<vz> result;
+	partitions(max, count, [&result](vz &&vec) {
 		result.push_back(move(vec));
 		});
 	return result;
 }
 
-void partitions(size_t max, size_t count, function<void(vector<size_t> &&)> callback) {
+void partitions(size_t max, size_t count, function<void(vz &&)> callback) {
 	if (count == 1) {
 		callback({max});
 		return;
 	}
 	for (size_t i = 0; i <= max; ++i) {
-		partitions(max - i, count - 1, [i, callback](vector<size_t> &&base) {
+		partitions(max - i, count - 1, [i, callback](vz &&base) {
 			base.push_back(i);
 			callback(move(base));
 			});
@@ -128,7 +128,7 @@ void partitions(size_t max, size_t count, function<void(vector<size_t> &&)> call
 }
 
 void primes(function<bool(int64_t)> callback) {
-	static vector<int64_t> prime_cache = {2, 3};
+	static vi prime_cache = {2, 3};
 
 	for (int i = 0; i < prime_cache.size(); ++i) {
 		if (callback(prime_cache[i])) {
@@ -174,8 +174,8 @@ vector<prime_factor_t> prime_factors(int64_t num) {
 	return result;
 }
 
-vector<int64_t> factorize(int64_t num) {
-	vector<int64_t> result = {};
+vi factorize(int64_t num) {
+	vi result = {};
 	auto primes = prime_factors(num);
 	vector<int> counts(primes.size());
 	bool done = false;
@@ -201,7 +201,7 @@ vector<int64_t> factorize(int64_t num) {
 	return result;
 }
 
-int64_t sum(vector<int64_t> vec) {
+int64_t sum(vi vec) {
 	int64_t result = 0;
 	for (int i = 0; i < vec.size(); ++i) {
 		result += vec[i];
@@ -209,7 +209,7 @@ int64_t sum(vector<int64_t> vec) {
 	return result;
 }
 
-int64_t product(vector<int64_t> vec) {
+int64_t product(vi vec) {
 	int64_t result = 1;
 	for (int i = 0; i < vec.size(); ++i) {
 		result *= vec[i];
@@ -217,11 +217,11 @@ int64_t product(vector<int64_t> vec) {
 	return result;
 }
 
-vector<vector<int64_t>> choose(int64_t n, int64_t k) {
+vector<vi> choose(int64_t n, int64_t k) {
 	if (k == 0) {
 		return {{}};
 	}
-	vector<vector<int64_t>> result = {};
+	vector<vi> result = {};
 	for (int64_t i = n - k; i >= 0; --i) {
 		for (auto c : choose(i, k - 1)) {
 			c.push_back(i);
