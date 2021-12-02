@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 1;
+const int64_t DAY = 2;
 const int64_t PART = 1;
-
-int64_t day1_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day1_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day2_1(ifstream &&in) {
   int64_t result = 0;
@@ -301,6 +289,38 @@ int64_t day25_1(ifstream &&in) {
 
 int64_t day25_2(ifstream &&in) {
   int64_t result = 0;
+
+  return result;
+}
+
+// product of the two numbers that sum to 2020
+int64_t day1_1(ifstream &&in) {
+  int64_t result = 0;
+  auto nums = get_nums(in);
+  for (int i = 0; i < nums.size(); ++i) {
+    for (int j = i; j < nums.size(); ++j) {
+      if (nums[i] + nums[j] == 2020) {
+        return nums[i] * nums[j];
+      }
+    }
+  }
+
+  return result;
+}
+
+// product of the three numbers that sum to 2020
+int64_t day1_2(ifstream &&in) {
+  int64_t result = 0;
+  auto nums = get_nums(in);
+  for (int i = 0; i < nums.size(); ++i) {
+    for (int j = i; j < nums.size(); ++j) {
+      for (int k = i; k < nums.size(); ++k) {
+        if (nums[i] + nums[j] + nums[k] == 2020) {
+          return nums[i] * nums[j] * nums[k];
+        }
+      }
+    }
+  }
 
   return result;
 }
