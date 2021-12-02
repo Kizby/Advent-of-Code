@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 1;
+const int64_t DAY = 2;
 const int64_t PART = 1;
-
-int64_t day1_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day1_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day2_1(ifstream &&in) {
   int64_t result = 0;
@@ -301,6 +289,40 @@ int64_t day25_1(ifstream &&in) {
 
 int64_t day25_2(ifstream &&in) {
   int64_t result = 0;
+
+  return result;
+}
+
+// sum of digits that match the next digit in a *circular* list
+int64_t day1_1(ifstream &&in) {
+  int last = 0;
+  int64_t result = 0;
+  auto line = slurp(in);
+  for (char c : line) {
+    if (c == last) {
+      result += c - '0';
+    }
+    last = c;
+  }
+  if (last == line[0]) {
+    result += last - '0';
+  }
+
+  return result;
+}
+
+// sum of digits that match the opposing digit in a *circular* list
+int64_t day1_2(ifstream &&in) {
+  int last = 0;
+  int64_t result = 0;
+  auto line = slurp(in);
+  int pos = 0;
+  for (char c : line) {
+    if (c == line[(pos++ + line.size() / 2) % line.size()]) {
+      result += c - '0';
+    }
+    last = c;
+  }
 
   return result;
 }
