@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 2;
+const int64_t DAY = 3;
 const int64_t PART = 1;
-
-int64_t day2_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day2_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day3_1(ifstream &&in) {
   int64_t result = 0;
@@ -321,6 +309,39 @@ int64_t day1_2(ifstream &&in) {
     //cout << prev << endl;
   }
   return count;
+}
+
+int64_t day2_1(ifstream &&in) {
+  string line;
+  vector<int64_t> pos = {0, 0};
+  while (getline(in, line)) {
+    auto tokens = split(line, " ");
+    switch (tokens[0][0]) {
+    case 'f': pos[0] += stoll(tokens[1]); break;
+    case 'u': pos[1] -= stoll(tokens[1]); break;
+    case 'd': pos[1] += stoll(tokens[1]); break;
+    }
+  }
+  int64_t result = product(pos);
+
+  return result;
+}
+
+int64_t day2_2(ifstream &&in) {
+  string line;
+  vector<int64_t> pos = {0, 0};
+  int64_t aim = 0;
+  while (getline(in, line)) {
+    auto tokens = split(line, " ");
+    switch (tokens[0][0]) {
+    case 'f': pos[0] += stoll(tokens[1]); pos[1] += stoll(tokens[1]) * aim; break;
+    case 'u': aim -= stoll(tokens[1]); break;
+    case 'd': aim += stoll(tokens[1]); break;
+    }
+  }
+  int64_t result = product(pos);
+
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
