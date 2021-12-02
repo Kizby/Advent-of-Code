@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 2;
+const int64_t DAY = 3;
 const int64_t PART = 1;
-
-int64_t day2_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day2_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day3_1(ifstream &&in) {
   int64_t result = 0;
@@ -318,6 +306,59 @@ int64_t day1_2(ifstream &&in) {
   }
 
   return result;
+}
+
+// multiply the number of lines that have exactly two of any letter by the number that have exactly three
+int64_t day2_1(ifstream &&in) {
+  int64_t twos = 0, threes = 0;
+  for (auto line : split(slurp(in))) {
+    auto h = histogram<char>(line);
+    bool hasTwo = false;
+    bool hasThree = false;
+    for (auto entry : h) {
+      if (entry.second == 2) {
+        hasTwo = true;
+      }
+      if (entry.second == 3) {
+        hasThree = true;
+      }
+    }
+    if (hasTwo) {
+      twos++;
+    }
+    if (hasThree) {
+      threes++;
+    }
+  }
+
+  return twos * threes;
+}
+
+// find the lines that differ by only one letter
+int64_t day2_2(ifstream &&in) {
+  auto lines = split(slurp(in));
+  for (int i = 0; i < lines.size(); ++i) {
+    for (int j = i + 1; j < lines.size(); ++j) {
+      if (lines[i].size() != lines[j].size()) {
+        continue;
+      }
+      int exact = 0;
+      int which = 0;
+      for (int k = 0; k < lines[i].size(); ++k) {
+        if (lines[i][k] == lines[j][k]) {
+          exact++;
+        } else {
+          which = k;
+        }
+      }
+      if (exact == lines[i].size() - 1) {
+        report(lines[i].substr(0, which) + lines[i].substr(which + 1));
+        exit(0);
+      }
+    }
+  }
+
+  return 0;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
