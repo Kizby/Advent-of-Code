@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 2;
+const int64_t DAY = 3;
 const int64_t PART = 1;
-
-int64_t day2_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day2_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day3_1(ifstream &&in) {
   int64_t result = 0;
@@ -319,6 +307,39 @@ int64_t day1_2(ifstream &&in) {
           return nums[i] * nums[j] * nums[k];
         }
       }
+    }
+  }
+
+  return result;
+}
+
+// how many passwords have the given range of counts of the given letter
+int64_t day2_1(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  while (getline(in, line)) {
+    auto tokens = split(line, " ");
+    auto range = map_to_num(split(tokens[0], "-"));
+    auto which = tokens[1][0];
+    auto h = histogram<char>(tokens[2]);
+    if (h[which] >= range[0] && h[which] <= range[1]) {
+      ++result;
+    }
+  }
+
+  return result;
+}
+
+// how many passwords have the given letter in precisely one of the two indices given?
+int64_t day2_2(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  while (getline(in, line)) {
+    auto tokens = split(line, " ");
+    auto range = map_to_num(split(tokens[0], "-"));
+    auto which = tokens[1][0];
+    if ((tokens[2][range[0] - 1] == which) != (tokens[2][range[1] - 1] == which)) {
+      ++result;
     }
   }
 
