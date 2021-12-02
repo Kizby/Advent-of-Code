@@ -295,7 +295,7 @@ int64_t day25_2(ifstream &&in) {
 
 // how many measurements are higher than the previous one?
 int64_t day1_1(ifstream &&in) {
-  int last = 0;
+  int64_t last = 0;
   int count = 0;
   for (auto a : map_to_num(split(slurp(in)))) {
     if (a > last) {
@@ -311,7 +311,7 @@ int64_t day1_2(ifstream &&in) {
   vector<int64_t> last = {0, 0, 0};
   int count = 0;
   int pos = 0;
-  int prev = 0;
+  int64_t prev = 0;
   for (auto a : map_to_num(split(slurp(in)))) {
     last[pos++ % 3] = a;
     if (pos > 3 && sum(last) > prev) {

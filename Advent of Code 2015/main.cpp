@@ -1289,6 +1289,7 @@ int64_t day21_2(ifstream &&in) {
       }
     }
   }
+  return 0;
 }
 
 struct day22_state {
