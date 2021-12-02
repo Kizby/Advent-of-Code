@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 2;
+const int64_t DAY = 3;
 const int64_t PART = 1;
-
-int64_t day2_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day2_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day3_1(ifstream &&in) {
   int64_t result = 0;
@@ -317,6 +305,55 @@ int64_t day1_2(ifstream &&in) {
   }
 
   return result;
+}
+
+// eeeeeee, INTCODE!!!!! emulate a simple computer, give its output
+int64_t day2_1(ifstream &&in) {
+  int64_t result = 0;
+  auto nums = get_nums(in, ",");
+  nums[1] = 12;
+  nums[2] = 2;
+  bool done = false;
+  for (int i = 0; !done && i < nums.size(); i += 4) {
+    //for (int j = 0; j < nums.size(); ++j) {
+    //  cout << (j == i ? "!" : "") << nums[j] << " ";
+    //}
+    //cout << endl;
+
+    switch (nums[i]) {
+    case 1: nums[nums[i + 3]] = nums[nums[i + 1]] + nums[nums[i + 2]]; break;
+    case 2: nums[nums[i + 3]] = nums[nums[i + 1]] * nums[nums[i + 2]]; break;
+    case 99: done = true; break;
+    default: cout << "Unhandled opcode " << nums[i] << endl; break;
+    }
+  }
+  return nums[0];
+}
+
+// find the inputs that produce the given output
+int64_t day2_2(ifstream &&in) {
+  int64_t result = 0;
+  auto base_nums = get_nums(in, ",");
+  for (int i = 0; i < 100; ++i) {
+    for (int j = 0; j < 100; ++j) {
+      auto nums = base_nums;
+      nums[1] = i;
+      nums[2] = j;
+      bool done = false;
+      for (int i = 0; !done && i < nums.size(); i += 4) {
+        switch (nums[i]) {
+        case 1: nums[nums[i + 3]] = nums[nums[i + 1]] + nums[nums[i + 2]]; break;
+        case 2: nums[nums[i + 3]] = nums[nums[i + 1]] * nums[nums[i + 2]]; break;
+        case 99: done = true; break;
+        default: cout << "Unhandled opcode " << nums[i] << endl; break;
+        }
+      }
+      if (nums[0] == 19690720) {
+        return 100 * nums[1] + nums[2];
+      }
+    }
+  }
+  return 0;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
