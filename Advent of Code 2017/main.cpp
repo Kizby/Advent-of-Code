@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 2;
+const int64_t DAY = 3;
 const int64_t PART = 1;
-
-int64_t day2_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day2_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day3_1(ifstream &&in) {
   int64_t result = 0;
@@ -322,6 +310,39 @@ int64_t day1_2(ifstream &&in) {
       result += c - '0';
     }
     last = c;
+  }
+
+  return result;
+}
+
+// sum of max differences of each line
+int64_t day2_1(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  while (getline(in, line)) {
+    auto nums = map_to_num(split(line, "\t"));
+    result += max(nums) - min(nums);
+  }
+
+  return result;
+}
+
+// sum of only exact quotient of each line
+int64_t day2_2(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  while (getline(in, line)) {
+    auto nums = map_to_num(split(line, "\t"));
+  outer:
+    for (int i = 0; i < nums.size(); ++i) {
+      for (int j = 0; j < nums.size(); ++j) {
+        if (i != j && nums[i] % nums[j] == 0) {
+          result += nums[i] / nums[j];
+          i = nums.size();
+          break;
+        }
+      }
+    }
   }
 
   return result;
