@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 1;
+const int64_t DAY = 2;
 const int64_t PART = 1;
-
-int64_t day1_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day1_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day2_1(ifstream &&in) {
   int64_t result = 0;
@@ -301,6 +289,62 @@ int64_t day25_1(ifstream &&in) {
 
 int64_t day25_2(ifstream &&in) {
   int64_t result = 0;
+
+  return result;
+}
+
+// given directions of the form R5 or L17, navigate a grid; how many blocks away do you end up?
+int64_t day1_1(ifstream &&in) {
+  vi pos = {0, 0};
+  vector<vi> dirs = {
+    {1, 0},
+    {0, 1},
+    {-1, 0},
+    {0, -1},
+  };
+  int dir = 0;
+  for (auto &token : split(slurp(in), ", ")) {
+    auto dist = stoll(token.substr(1));
+    switch (token[0]) {
+    case 'R': dir = (dir + 1) % 4; break;
+    case 'L': dir = (dir + 3) % 4; break;
+    }
+    pos[0] += dirs[dir][0] * dist;
+    pos[1] += dirs[dir][1] * dist;
+    cout << token << ": " << pos[0] << ", " << pos[1] << endl;
+  }
+  int64_t result = abs(pos[0]) + abs(pos[1]);
+
+  return result;
+}
+
+// what's the first coordinate you traverse twice?
+int64_t day1_2(ifstream &&in) {
+  vi pos = {0, 0};
+  vector<vi> dirs = {
+    {1, 0},
+    {0, 1},
+    {-1, 0},
+    {0, -1},
+  };
+  int dir = 0;
+  set<vi> seen = {{0, 0}};
+  for (auto &token : split(slurp(in), ", ")) {
+    auto dist = stoll(token.substr(1));
+    switch (token[0]) {
+    case 'R': dir = (dir + 1) % 4; break;
+    case 'L': dir = (dir + 3) % 4; break;
+    }
+    for (int i = 0; i < dist; ++i) {
+      pos[0] += dirs[dir][0];
+      pos[1] += dirs[dir][1];
+      if (!seen.insert(pos).second) {
+        return abs(pos[0]) + abs(pos[1]);
+      }
+    }
+    cout << token << ": " << pos[0] << ", " << pos[1] << endl;
+  }
+  int64_t result = abs(pos[0]) + abs(pos[1]);
 
   return result;
 }
