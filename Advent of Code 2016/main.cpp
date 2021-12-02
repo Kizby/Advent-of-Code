@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 2;
+const int64_t DAY = 3;
 const int64_t PART = 1;
-
-int64_t day2_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day2_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day3_1(ifstream &&in) {
   int64_t result = 0;
@@ -347,6 +335,64 @@ int64_t day1_2(ifstream &&in) {
   int64_t result = abs(pos[0]) + abs(pos[1]);
 
   return result;
+}
+
+// navigate a numpad, give the code
+int64_t day2_1(ifstream &&in) {
+  string result = "";
+  vi pos = {1, 1};
+  vector<vi> nums = {
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9},
+  };
+  for (auto s : split(slurp(in))) {
+    for (auto c : s) {
+      switch (c) {
+      case 'U': --pos[0]; if (pos[0] < 0) pos[0] = 0; break;
+      case 'D': ++pos[0]; if (pos[0] > 2) pos[0] = 2; break;
+      case 'L': --pos[1]; if (pos[1] < 0) pos[1] = 0; break;
+      case 'R': ++pos[1]; if (pos[1] > 2) pos[1] = 2; break;
+      }
+    }
+    result += to_string(nums[pos[0]][pos[1]]);
+  }
+
+  report(result);
+  exit(0);
+}
+
+// larger numpad
+int64_t day2_2(ifstream &&in) {
+  string result = "";
+  vi pos = {3, 1};
+  vector<vi> nums = {
+    {0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 1, 0, 0, 0},
+    {0, 0, 2, 3, 4, 0, 0},
+    {0, 5, 6, 7, 8, 9, 0},
+    {0, 0, 10, 11, 12, 0},
+    {0, 0, 0, 13, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0},
+  };
+  for (auto s : split(slurp(in))) {
+    for (auto c : s) {
+      switch (c) {
+      case 'U': --pos[0]; if (nums[pos[0]][pos[1]] == 0) ++pos[0]; break;
+      case 'D': ++pos[0]; if (nums[pos[0]][pos[1]] == 0) --pos[0]; break;
+      case 'L': --pos[1]; if (nums[pos[0]][pos[1]] == 0) ++pos[1]; break;
+      case 'R': ++pos[1]; if (nums[pos[0]][pos[1]] == 0) --pos[1]; break;
+      }
+    }
+    string next = to_string(nums[pos[0]][pos[1]]);
+    if (next.size() > 1) {
+      next = string(1, next[1] - '0' + 'A');
+    }
+    result += next;
+  }
+
+  report(result);
+  exit(0);
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
