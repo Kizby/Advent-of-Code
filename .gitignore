@@ -42,3 +42,5 @@ input/*
 
 # session cookie
 session.txt
+
+last_result.txt

@@ -238,6 +238,19 @@ void copy(string s)
 		cout << "String is too long: " << s.size() << endl;
 		return;
 	}
+	{
+		{
+			ifstream last_result("../last_result.txt");
+			if (slurp(last_result) == s) {
+				cout << "DUPLICATE!" << endl;
+				return;
+			}
+		}
+		{
+			ofstream last_result("../last_result.txt");
+			last_result << s;
+		}
+	}
 
 	// Open the clipboard, and empty it. 
 	if (!OpenClipboard(NULL))
