@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 1;
+const int64_t DAY = 2;
 const int64_t PART = 1;
-
-int64_t day1_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day1_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day2_1(ifstream &&in) {
   int64_t result = 0;
@@ -301,6 +289,33 @@ int64_t day25_1(ifstream &&in) {
 
 int64_t day25_2(ifstream &&in) {
   int64_t result = 0;
+
+  return result;
+}
+
+// sum of numbers in a list
+int64_t day1_1(ifstream &&in) {
+  int64_t result = 0;
+  for (auto num : map_to_num(split(slurp(in)))) {
+    result += num;
+  }
+
+  return result;
+}
+
+// continue taking that sum repeatedly until a partial sum is repeated
+int64_t day1_2(ifstream &&in) {
+  int64_t result = 0;
+  set<int64_t> seen = {0};
+  auto nums = map_to_num(split(slurp(in)));
+  while (true) {
+    for (auto num : nums) {
+      result += num;
+      if (!seen.insert(result).second) {
+        return result;
+      }
+    }
+  }
 
   return result;
 }
