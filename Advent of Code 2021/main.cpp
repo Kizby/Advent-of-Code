@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 3;
+const int64_t DAY = 4;
 const int64_t PART = 1;
-
-int64_t day3_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day3_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day4_1(ifstream &&in) {
   int64_t result = 0;
@@ -344,6 +332,91 @@ int64_t day2_2(ifstream &&in) {
   int64_t result = product(pos);
 
   return result;
+}
+
+// product of number composed of most common bits and number composed of least common bits
+int64_t day3_1(ifstream &&in) {
+  int64_t result = 0;
+  auto lines = split(slurp(in));
+  vi sum(lines[0].size());
+  for (int i = 0; i < lines.size(); ++i) {
+    //cout << lines[i] << endl;
+    for (int j = 0; j < lines[i].size(); ++j) {
+      if (lines[i][j] == '1') {
+        sum[j]++;
+      }
+    }
+  }
+  int64_t epsilon = 0;
+  for (int i = 0; i < sum.size(); ++i) {
+    cout << sum[i] << " ";
+    result <<= 1;
+    epsilon <<= 1;
+    if (sum[i] > lines.size() / 2) {
+      result += 1;
+    } else if (sum[i] < lines.size() / 2) {
+      epsilon += 1;
+    }
+  }
+
+  return result * epsilon;
+}
+
+// iteratively keep values with most common bit until one remains; multiply them
+int64_t day3_2(ifstream &&in) {
+  int64_t result = 0;
+  auto lines = split(slurp(in));// "00100    11110    10110    10111    10101    01111    00111    11100    10000    11001    00010    01010", " +");//slurp(in));
+  vi sum(lines[0].size());
+  for (int i = 0; i < lines.size(); ++i) {
+    //cout << lines[i] << endl;
+    for (int j = 0; j < lines[i].size(); ++j) {
+      if (lines[i][j] == '1') {
+        sum[j]++;
+      }
+    }
+  }
+  vs oxygen = lines;
+  vi sumox = sum;
+  vs co2 = lines;
+  vi sumco2 = sum;
+  for (int j = 0; j < sum.size(); ++j) {
+    vs next_oxygen;
+    vs next_co2;
+    if (oxygen.size() > 1) {
+      for (int i = 0; i < oxygen.size(); ++i) {
+        if ((sumox[j] < oxygen.size() / 2.) != (oxygen[i][j] == '1')) {
+          next_oxygen.push_back(oxygen[i]);
+        }
+      }
+      sumox = vi(sum.size());
+      oxygen = next_oxygen;
+      for (int i = 0; i < oxygen.size(); ++i) {
+        for (int k = 0; k < oxygen[i].size(); ++k) {
+          if (oxygen[i][k] == '1') {
+            sumox[k]++;
+          }
+        }
+      }
+    }
+    if (co2.size() > 1) {
+      for (int i = 0; i < co2.size(); ++i) {
+        if ((sumco2[j] >= co2.size() / 2.) != (co2[i][j] == '1')) {
+          next_co2.push_back(co2[i]);
+        }
+      }
+      sumco2 = vi(sum.size());
+      co2 = next_co2;
+      for (int i = 0; i < co2.size(); ++i) {
+        for (int k = 0; k < co2[i].size(); ++k) {
+          if (co2[i][k] == '1') {
+            sumco2[k]++;
+          }
+        }
+      }
+    }
+  }
+  //cout << oxygen[0] << " " << co2[0] << endl;
+  return stoll(oxygen[0], nullptr, 2) * stoll(co2[0], nullptr, 2);
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
