@@ -53,6 +53,10 @@ vs split(const string& input, const string& regex) {
 	sregex_token_iterator
 		first{ input.begin(), input.end(), re, -1 },
 		last;
+	// for most delimiters, an empty first element is worthless; empty lines are sometimes meaningful tho
+	if (regex != "\n" && *first == "") {
+		++first;
+	}
 	return { first, last };
 }
 
