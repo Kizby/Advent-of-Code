@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 4;
+const int64_t DAY = 5;
 const int64_t PART = 1;
-
-int64_t day4_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day4_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day5_1(ifstream &&in) {
   int64_t result = 0;
@@ -417,6 +405,123 @@ int64_t day3_2(ifstream &&in) {
   }
   //cout << oxygen[0] << " " << co2[0] << endl;
   return stoll(oxygen[0], nullptr, 2) * stoll(co2[0], nullptr, 2);
+}
+
+// which bingo board wins first?
+int64_t day4_1(ifstream &&in) {
+  string line;
+  getline(in, line);
+  auto draws = map_to_num(split(line, ","));
+  vector<vector<vi>> boards;
+  while (getline(in, line)) {
+    vector<vi> board;
+    for (int i = 0; i < 5; ++i) {
+      getline(in, line);
+      board.push_back(map_to_num(split(line, " +")));
+    }
+    boards.push_back(board);
+  }
+
+  int64_t result = 0;
+  set<int64_t> seen;
+  for (auto draw : draws) {
+    seen.insert(draw);
+    for (auto board : boards) {
+      bool wonRow = true;
+      bool wonCol = true;
+      for (int i = 0; i < 5; ++i) {
+        wonRow = true;
+        wonCol = true;
+        for (int j = 0; j < 5; ++j) {
+          if (!seen.contains(board[i][j])) {
+            wonRow = false;
+          }
+          if (!seen.contains(board[j][i])) {
+            wonCol = false;
+          }
+        }
+        if (wonRow || wonCol) {
+          break;
+        }
+      }
+      if (wonRow || wonCol) {
+        for (int i = 0; i < 5; ++i) {
+          for (int j = 0; j < 5; ++j) {
+            if (!seen.contains(board[i][j])) {
+              result += board[i][j];
+            }
+          }
+        }
+        return result * draw;
+      }
+    }
+  }
+
+  return result;
+}
+
+// which bingo board wins last?
+int64_t day4_2(ifstream &&in) {
+  //in = ifstream("../TextFile1.txt");
+  string line;
+  getline(in, line);
+  auto draws = map_to_num(split(line, ","));
+  vector<vector<vi>> boards;
+  while (getline(in, line)) {
+    vector<vi> board;
+    for (int i = 0; i < 5; ++i) {
+      getline(in, line);
+      while (line[0] == ' ') {
+        line = line.substr(1);
+      }
+      board.push_back(map_to_num(split(line, " +")));
+    }
+    boards.push_back(board);
+  }
+
+  int64_t result = 0;
+  set<int64_t> seen;
+  set<vector<vi>> victors;
+  for (auto draw : draws) {
+    seen.insert(draw);
+    for (auto board : boards) {
+      if (victors.contains(board)) {
+        continue;
+      }
+      bool wonRow = true;
+      bool wonCol = true;
+      for (int i = 0; i < 5; ++i) {
+        wonRow = true;
+        wonCol = true;
+        for (int j = 0; j < 5; ++j) {
+          if (!seen.contains(board[i][j])) {
+            wonRow = false;
+          }
+          if (!seen.contains(board[j][i])) {
+            wonCol = false;
+          }
+        }
+        if (wonRow || wonCol) {
+          break;
+        }
+      }
+      if (wonRow || wonCol) {
+        victors.insert(board);
+        if (victors.size() == boards.size()) {
+          for (int i = 0; i < 5; ++i) {
+            for (int j = 0; j < 5; ++j) {
+              if (!seen.contains(board[i][j])) {
+                result += board[i][j];
+              }
+            }
+          }
+          return result * draw;
+        }
+      }
+    }
+  }
+
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
