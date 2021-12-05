@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 5;
+const int64_t DAY = 6;
 const int64_t PART = 1;
-
-int64_t day5_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day5_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day6_1(ifstream &&in) {
   int64_t result = 0;
@@ -517,6 +505,139 @@ int64_t day4_2(ifstream &&in) {
           }
           return result * draw;
         }
+      }
+    }
+  }
+
+  return result;
+}
+
+// draw horizontal and vertical lines, count how many points are covered by more than one
+int64_t day5_1(ifstream &&in) {
+  //in = ifstream("../TextFile2.txt");
+  int64_t result = 0;
+  set<vi> seen;
+  auto tokens = split(split(slurp(in)), "(,)|( -> )");
+  vector<vi> coords;
+  vi bounds = {0, 0, 0, 0};
+  for (int i = 0; i < tokens.size(); ++i) {
+    coords.push_back(map_to_num(tokens[i]));
+    if (coords[i][0] < bounds[0]) {
+      bounds[0] = coords[i][0];
+    }
+    if (coords[i][0] > bounds[2]) {
+      bounds[2] = coords[i][0];
+    }
+    if (coords[i][1] < bounds[1]) {
+      bounds[1] = coords[i][1];
+    }
+    if (coords[i][1] > bounds[3]) {
+      bounds[3] = coords[i][1];
+    }
+    if (coords[i][2] < bounds[0]) {
+      bounds[0] = coords[i][0];
+    }
+    if (coords[i][2] > bounds[2]) {
+      bounds[2] = coords[i][0];
+    }
+    if (coords[i][3] < bounds[1]) {
+      bounds[1] = coords[i][1];
+    }
+    if (coords[i][3] > bounds[3]) {
+      bounds[3] = coords[i][1];
+    }
+  }
+  vector<vi> map;
+  for (auto i = bounds[0]; i <= bounds[2]; ++i) {
+    map.push_back(vi(bounds[3] - bounds[1] + 1));
+  }
+  for (int i = 0; i < coords.size(); ++i) {
+    if (coords[i][0] == coords[i][2]) {
+      for (int j = min(coords[i][1], coords[i][3]); j <= max(coords[i][1], coords[i][3]); ++j) {
+        ++map[coords[i][0] - bounds[0]][j - bounds[1]];
+      }
+    }
+    if (coords[i][1] == coords[i][3]) {
+      for (int j = min(coords[i][0], coords[i][2]); j <= max(coords[i][0], coords[i][2]); ++j) {
+        ++map[j - bounds[0]][coords[i][1] - bounds[1]];
+      }
+    }
+  }
+  for (int i = 0; i < map.size(); ++i) {
+    for (int j = 0; j < map[i].size(); ++j) {
+      if (map[i][j] > 1) {
+        ++result;
+      }
+    }
+  }
+
+  return result;
+}
+
+// now 1:1 diagonal lines as well
+int64_t day5_2(ifstream &&in) {
+  //in = ifstream("../TextFile2.txt");
+  int64_t result = 0;
+  set<vi> seen;
+  auto tokens = split(split(slurp(in)), "(,)|( -> )");
+  vector<vi> coords;
+  vi bounds = {0, 0, 0, 0};
+  for (int i = 0; i < tokens.size(); ++i) {
+    coords.push_back(map_to_num(tokens[i]));
+    if (coords[i][0] < bounds[0]) {
+      bounds[0] = coords[i][0];
+    }
+    if (coords[i][0] > bounds[2]) {
+      bounds[2] = coords[i][0];
+    }
+    if (coords[i][1] < bounds[1]) {
+      bounds[1] = coords[i][1];
+    }
+    if (coords[i][1] > bounds[3]) {
+      bounds[3] = coords[i][1];
+    }
+    if (coords[i][2] < bounds[0]) {
+      bounds[0] = coords[i][0];
+    }
+    if (coords[i][2] > bounds[2]) {
+      bounds[2] = coords[i][0];
+    }
+    if (coords[i][3] < bounds[1]) {
+      bounds[1] = coords[i][1];
+    }
+    if (coords[i][3] > bounds[3]) {
+      bounds[3] = coords[i][1];
+    }
+  }
+  vector<vi> map;
+  for (auto i = bounds[0]; i <= bounds[2]; ++i) {
+    map.push_back(vi(bounds[3] - bounds[1] + 1));
+  }
+  for (int i = 0; i < coords.size(); ++i) {
+    if (coords[i][0] == coords[i][2]) {
+      for (int j = min(coords[i][1], coords[i][3]); j <= max(coords[i][1], coords[i][3]); ++j) {
+        ++map[coords[i][0] - bounds[0]][j - bounds[1]];
+      }
+    } else if (coords[i][1] == coords[i][3]) {
+      for (int j = min(coords[i][0], coords[i][2]); j <= max(coords[i][0], coords[i][2]); ++j) {
+        ++map[j - bounds[0]][coords[i][1] - bounds[1]];
+      }
+    } else {
+      // diagonal
+      auto dx = coords[i][2] - coords[i][0];
+      dx /= abs(dx);
+      auto dy = coords[i][3] - coords[i][1];
+      dy /= abs(dy);
+      for (int j = 0; j <= abs(coords[i][0] - coords[i][2]); ++j) {
+        ++map[coords[i][0] + dx * j - bounds[0]][coords[i][1] + dy * j - bounds[1]];
+      }
+    }
+
+  }
+  for (int i = 0; i < map.size(); ++i) {
+    for (int j = 0; j < map[i].size(); ++j) {
+      if (map[i][j] > 1) {
+        ++result;
       }
     }
   }
