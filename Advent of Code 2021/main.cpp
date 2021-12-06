@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 6;
+const int64_t DAY = 7;
 const int64_t PART = 1;
-
-int64_t day6_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day6_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day7_1(ifstream &&in) {
   int64_t result = 0;
@@ -643,6 +631,51 @@ int64_t day5_2(ifstream &&in) {
   }
 
   return result;
+}
+
+// given fish doing exponential growth, how many after 80 days?
+int64_t day6_1(ifstream &&in) {
+  int64_t result = 0;
+  auto state = map_to_num(split(slurp(in), ","));
+  for (int i = 0; i < 80; ++i) {
+    cout << i << endl;
+    auto size = state.size();
+    for (int j = 0; j < size; ++j) {
+      if (--state[j] == -1) {
+        state[j] = 6;
+        state.push_back(8);
+      }
+    }
+  }
+  return state.size();
+}
+
+// after 256 days?
+int64_t day6_2(ifstream &&in) {
+  vi counts = {};
+  auto days = 256;
+  for (int n = 0; n <= days; ++n) {
+    int64_t count = 1;
+    for (int i = n - 9; i >= 0; i -= 7) {
+      count += counts[i];
+    }
+    counts.push_back(count);
+    cout << n << ": " << count << endl;
+  }
+
+  int64_t result = 0;
+  auto state = map_to_num(split(slurp(in), ","));
+  for (int i = 0; i < days; ++i) {
+    //cout << i << endl;
+    auto size = state.size();
+    for (int j = 0; j < size; ++j) {
+      if (--state[j] == -1) {
+        state[j] = 6;
+        result += counts[days - i - 1];
+      }
+    }
+  }
+  return state.size() + result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
