@@ -328,9 +328,9 @@ int64_t day3_1(ifstream &&in) {
     cout << sum[i] << " ";
     result <<= 1;
     epsilon <<= 1;
-    if (sum[i] > lines.size() / 2) {
+    if (sum[i] > (int64_t)lines.size() / 2) {
       result += 1;
-    } else if (sum[i] < lines.size() / 2) {
+    } else if (sum[i] < (int64_t)lines.size() / 2) {
       epsilon += 1;
     }
   }
@@ -553,12 +553,12 @@ int64_t day5_1(ifstream &&in) {
   }
   for (int i = 0; i < coords.size(); ++i) {
     if (coords[i][0] == coords[i][2]) {
-      for (int j = min(coords[i][1], coords[i][3]); j <= max(coords[i][1], coords[i][3]); ++j) {
+      for (auto j = min(coords[i][1], coords[i][3]); j <= max(coords[i][1], coords[i][3]); ++j) {
         ++map[coords[i][0] - bounds[0]][j - bounds[1]];
       }
     }
     if (coords[i][1] == coords[i][3]) {
-      for (int j = min(coords[i][0], coords[i][2]); j <= max(coords[i][0], coords[i][2]); ++j) {
+      for (auto j = min(coords[i][0], coords[i][2]); j <= max(coords[i][0], coords[i][2]); ++j) {
         ++map[j - bounds[0]][coords[i][1] - bounds[1]];
       }
     }
@@ -615,11 +615,11 @@ int64_t day5_2(ifstream &&in) {
   }
   for (int i = 0; i < coords.size(); ++i) {
     if (coords[i][0] == coords[i][2]) {
-      for (int j = min(coords[i][1], coords[i][3]); j <= max(coords[i][1], coords[i][3]); ++j) {
+      for (auto j = min(coords[i][1], coords[i][3]); j <= max(coords[i][1], coords[i][3]); ++j) {
         ++map[coords[i][0] - bounds[0]][j - bounds[1]];
       }
     } else if (coords[i][1] == coords[i][3]) {
-      for (int j = min(coords[i][0], coords[i][2]); j <= max(coords[i][0], coords[i][2]); ++j) {
+      for (auto j = min(coords[i][0], coords[i][2]); j <= max(coords[i][0], coords[i][2]); ++j) {
         ++map[j - bounds[0]][coords[i][1] - bounds[1]];
       }
     } else {
