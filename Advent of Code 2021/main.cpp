@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 7;
+const int64_t DAY = 8;
 const int64_t PART = 1;
-
-int64_t day7_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day7_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day8_1(ifstream &&in) {
   int64_t result = 0;
@@ -676,6 +664,38 @@ int64_t day6_2(ifstream &&in) {
     }
   }
   return state.size() + result;
+}
+
+// minimize sum of differences
+int64_t day7_1(ifstream &&in) {
+  int64_t result = 0;
+  auto tokens = map_to_num(split(slurp(in), ","));
+  for (int64_t pos = 0; pos < max(tokens); ++pos) {
+    int64_t candidate = 0;
+    for (auto token : tokens) {
+      candidate += abs(pos - token);
+    }
+    if (result == 0 || candidate < result) {
+      result = candidate;
+    }
+  }
+  return result;
+}
+
+// minimize sum of triangles of differences; bonus forgetting the formula and adding a fudge factor based on a test case
+int64_t day7_2(ifstream &&in) {
+  int64_t result = 0;
+  auto tokens = map_to_num(split(slurp(in), ","));
+  for (int64_t pos = 0; pos < max(tokens); ++pos) {
+    int64_t candidate = 0;
+    for (auto token : tokens) {
+      candidate += (abs(pos - token) + 1) * abs(pos - token);
+    }
+    if (result == 0 || candidate < result) {
+      result = candidate;
+    }
+  }
+  return result / 2;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
