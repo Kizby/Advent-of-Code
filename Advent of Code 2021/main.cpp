@@ -710,7 +710,6 @@ int64_t day8_1(ifstream &&in) {
   return result;
 }
 
-
 // spot the rest of them, return the sum of all the codes
 int64_t day8_2(ifstream &&in) {
   int64_t result = 0;
@@ -799,6 +798,84 @@ int64_t day8_2(ifstream &&in) {
       sort(tokens[1][i].begin(), tokens[1][i].end());
       for (auto entry : code) {
         if (entry.second == tokens[1][i]) {
+          current += entry.first;
+          break;
+        }
+      }
+    }
+    result += current;
+  }
+
+  return result;
+}
+
+// day8_2 implemented with set functions to confirm the new utilities work
+int64_t day8_2_clean(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  while (getline(in, line)) {
+    auto tokens = split(split(line, "\\|"), " ");
+    vector<set<char>> digits;
+    vector<set<char>> unknowns;
+    for (int i = 0; i < tokens[0].size(); ++i) {
+      digits.push_back({tokens[0][i].begin(), tokens[0][i].end()});
+    }
+    for (int i = 0; i < tokens[1].size(); ++i) {
+      unknowns.push_back({tokens[1][i].begin(), tokens[1][i].end()});
+    }
+    map<int, set<char>> code;
+    while (code.size() < 10) {
+      for (int i = 0; i < digits.size(); ++i) {
+        switch (digits[i].size()) {
+        case 2:
+          code[1] = digits[i];
+          break;
+        case 3:
+          code[7] = digits[i];
+          break;
+        case 4:
+          code[4] = digits[i];
+          break;
+        case 5:
+          if (code.contains(1)) {
+            if (subset(digits[i], code[1])) {
+              code[3] = digits[i];
+            } else if (code.contains(3)) {
+              char spare = *(set_diff(digits[i], code[3]).begin());
+              if (code.contains(4)) {
+                if (!code[4].contains(spare)) {
+                  code[2] = digits[i];
+                } else {
+                  code[5] = digits[i];
+                }
+              }
+            }
+          }
+          break;
+        case 6:
+          if (code.contains(1)) {
+            if (!subset(digits[i], code[1])) {
+              code[6] = digits[i];
+            } else if (code.contains(4)) {
+              if (!subset(digits[i], code[4])) {
+                code[0] = digits[i];
+              } else {
+                code[9] = digits[i];
+              }
+            }
+          }
+          break;
+        case 7:
+          code[8] = digits[i];
+          break;
+        }
+      }
+    }
+    int current = 0;
+    for (int i = 0; i < unknowns.size(); ++i) {
+      current *= 10;
+      for (auto entry : code) {
+        if (entry.second == unknowns[i]) {
           current += entry.first;
           break;
         }
