@@ -333,9 +333,8 @@ int64_t day2_2(ifstream &&in) {
   string line;
   while (getline(in, line)) {
     auto nums = map_to_num(split(line, "\t"));
-  outer:
-    for (int i = 0; i < nums.size(); ++i) {
-      for (int j = 0; j < nums.size(); ++j) {
+    for (size_t i = 0; i < nums.size(); ++i) {
+      for (size_t j = 0; j < nums.size(); ++j) {
         if (i != j && nums[i] % nums[j] == 0) {
           result += nums[i] / nums[j];
           i = nums.size();
