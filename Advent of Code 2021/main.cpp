@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 8;
+const int64_t DAY = 9;
 const int64_t PART = 1;
-
-int64_t day8_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day8_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day9_1(ifstream &&in) {
   int64_t result = 0;
@@ -696,6 +684,130 @@ int64_t day7_2(ifstream &&in) {
     }
   }
   return result / 2;
+}
+
+// spot the 1, 4, 7, 8 digits from the active wires in their unlabelled line diagrams
+int64_t day8_1(ifstream &&in) {
+  int64_t result = 0;
+  //in = ifstream("../TextFile1.txt");
+  string line;
+  vs patterns = {"abcefg", "cf", "acdeg", "acdfg", "bcdf", "abdfg", "abdefg", "acf", "abcdefg", "abcdfg"};
+  while (getline(in, line)) {
+    auto tokens = split(split(line, "\\|"), " ");
+    for (int i = 0; i < tokens[1].size(); ++i) {
+      switch (tokens[1][i].size()) {
+      case 2:
+      case 3:
+      case 4:
+      case 7:
+        ++result;
+        cout << tokens[1][i] << endl;
+        break;
+      }
+    }
+  }
+
+  return result;
+}
+
+
+// spot the rest of them, return the sum of all the codes
+int64_t day8_2(ifstream &&in) {
+  int64_t result = 0;
+  //in = ifstream("../TextFile1.txt");
+  string line;
+  vs patterns = {"abcefg", "cf", "acdeg", "acdfg", "bcdf", "abdfg", "abdefg", "acf", "abcdefg", "abcdfg"};
+  //abcefg
+  //abdefg
+  //abcdfg
+
+  //acdeg
+  //acdfg
+  //abdfg
+  while (getline(in, line)) {
+    auto tokens = split(split(line, "\\|"), " ");
+    for (int i = 0; i < tokens[0].size(); ++i) {
+      sort(tokens[0][i].begin(), tokens[0][i].end());
+    }
+    map<int, string> code;
+    while (code.size() < 10) {
+      for (int i = 0; i < tokens[0].size(); ++i) {
+        switch (tokens[0][i].size()) {
+        case 2:
+          code[1] = tokens[0][i];
+          break;
+        case 3:
+          code[7] = tokens[0][i];
+          break;
+        case 4:
+          code[4] = tokens[0][i];
+          break;
+        case 5:
+          if (code.contains(1)) {
+            if (tokens[0][i].find(code[1][0]) != string::npos && tokens[0][i].find(code[1][1]) != string::npos) {
+              code[3] = tokens[0][i];
+            } else if (code.contains(3)) {
+              char spare = '\0';
+              for (char c : tokens[0][i]) {
+                if (code[3].find(c) == string::npos) {
+                  spare = c;
+                  break;
+                }
+              }
+              if (code.contains(4)) {
+                if (code[4].find(spare) == string::npos) {
+                  code[2] = tokens[0][i];
+                } else {
+                  code[5] = tokens[0][i];
+                }
+              }
+            }
+          }
+          break;
+        case 6:
+          if (code.contains(1)) {
+            if (tokens[0][i].find(code[1][0]) == string::npos || tokens[0][i].find(code[1][1]) == string::npos) {
+              code[6] = tokens[0][i];
+            } else if (code.contains(4)) {
+              bool anyMissing = false;
+              for (char c : code[4]) {
+                if (tokens[0][i].find(c) == string::npos) {
+                  anyMissing = true;
+                  break;
+                }
+              }
+              if (anyMissing) {
+                code[0] = tokens[0][i];
+              } else {
+                code[9] = tokens[0][i];
+              }
+            }
+          }
+          break;
+        case 7:
+          code[8] = tokens[0][i];
+          break;
+        }
+      }
+    }
+    int current = 0;
+    for (int i = 0; i < tokens[1].size(); ++i) {
+      if (tokens[1][i].size() == 0) {
+        continue;
+      }
+      current *= 10;
+      sort(tokens[1][i].begin(), tokens[1][i].end());
+      for (auto entry : code) {
+        if (entry.second == tokens[1][i]) {
+          current += entry.first;
+          break;
+        }
+      }
+    }
+    result += current;
+  }
+
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
