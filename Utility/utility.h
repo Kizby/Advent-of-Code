@@ -26,6 +26,9 @@ typedef vector<int64_t> vi;
 typedef vector<size_t> vz;
 typedef vector<string> vs;
 
+typedef set<int64_t> si;
+typedef set<string> ss;
+
 string slurp(ifstream &in);
 ifstream input(int year, int day);
 
@@ -66,6 +69,69 @@ unordered_map<T, int> histogram(C container) {
 	unordered_map<T, int> result;
 	for (T one : container) {
 		++result[one];
+	}
+	return result;
+}
+
+template <typename T>
+set<T> set_union(const set<T> &a, const set<T> &b) {
+	const auto &needles = a.size() > b.size() ? b : a;
+	auto haystack = a.size() > b.size() ? a : b;
+	for (const auto &element : needles) {
+		haystack.insert(element);
+	}
+	return haystack;
+}
+
+template <typename T>
+set<T> set_intersect(const set<T> &a, const set<T> &b) {
+	set<T> result;
+	const auto &needles = a.size() > b.size() ? b : a;
+	const auto &haystack = a.size() > b.size() ? a : b;
+	for (const auto &element : needles) {
+		if (haystack.contains(element)) {
+			result.insert(element);
+		}
+	}
+	return result;
+}
+
+template <typename T>
+bool subset(const set<T> &a, const set<T> &b) {
+	if (b.size() > a.size()) {
+		return false;
+	}
+	for (const auto &element : b) {
+		if (!a.contains(element)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+template <typename T>
+set<T> set_diff(const set<T> &a, const set<T> &b) {
+	set<T> result;
+	for (const auto &element : a) {
+		if (!b.contains(element)) {
+			result.insert(element);
+		}
+	}
+	return result;
+}
+
+template <typename T>
+set<T> set_sym_diff(const set<T> &a, const set<T> &b) {
+	set<T> result;
+	for (const auto &element : a) {
+		if (!b.contains(element)) {
+			result.insert(element);
+		}
+	}
+	for (const auto &element : b) {
+		if (!a.contains(element)) {
+			result.insert(element);
+		}
 	}
 	return result;
 }
