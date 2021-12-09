@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 9;
+const int64_t DAY = 10;
 const int64_t PART = 1;
-
-int64_t day9_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day9_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day10_1(ifstream &&in) {
   int64_t result = 0;
@@ -885,6 +873,130 @@ int64_t day8_2_clean(ifstream &&in) {
   }
 
   return result;
+}
+
+// find all the points in a grid lower than any adjacent point
+int64_t day9_1(ifstream &&in) {
+  int64_t result = 0;
+  vector<vi> map;
+  string line;
+  int64_t min = 9;
+  while (getline(in, line)) {
+    map.push_back({});
+    for (auto c : line) {
+      map[map.size() - 1].push_back(c - '0');
+      if (c - '0' < min) {
+        min = c - '0';
+      }
+    }
+  }
+
+  for (int i = 0; i < map.size(); ++i) {
+    for (int j = 0; j < map.size(); ++j) {
+      bool lower = true;
+      if (i > 0 && map[i - 1][j] <= map[i][j]) {
+        lower = false;
+      }
+      if (j > 0 && map[i][j - 1] <= map[i][j]) {
+        lower = false;
+      }
+      if (i < map.size() - 1 && map[i + 1][j] <= map[i][j]) {
+        lower = false;
+      }
+      if (j < map.size() - 1 && map[i][j + 1] <= map[i][j]) {
+        lower = false;
+      }
+      if (lower) {
+        result += 1 + map[i][j];
+      }
+    }
+  }
+
+  return result;
+}
+
+// find the product of the sizes of the three largest basins
+int64_t day9_2(ifstream &&in) {
+  int64_t result = 0;
+  vector<vi> surface;
+  string line;
+  //in = ifstream("../TextFile3.txt");
+  int64_t min = 9;
+  while (getline(in, line)) {
+    surface.push_back({});
+    for (auto c : line) {
+      surface[surface.size() - 1].push_back(c - '0');
+      if (c - '0' < min) {
+        min = c - '0';
+      }
+    }
+  }
+
+  int64_t label = -1;
+  bool changed = true;
+  while (changed) {
+    changed = false;
+    for (int i = 0; i < surface.size(); ++i) {
+      for (int j = 0; j < surface[i].size(); ++j) {
+        if (surface[i][j] == 9) {
+          continue;
+        }
+        bool lower = true;
+        int min_neighbor = 9;
+        if (i > 0 && surface[i - 1][j] <= surface[i][j]) {
+          lower = false;
+          if (surface[i - 1][j] < min_neighbor) {
+            min_neighbor = surface[i - 1][j];
+          }
+        }
+        if (j > 0 && surface[i][j - 1] <= surface[i][j]) {
+          lower = false;
+          if (surface[i][j - 1] < min_neighbor) {
+            min_neighbor = surface[i][j - 1];
+          }
+        }
+        if (i < surface.size() - 1 && surface[i + 1][j] <= surface[i][j]) {
+          lower = false;
+          if (surface[i + 1][j] < min_neighbor) {
+            min_neighbor = surface[i + 1][j];
+          }
+        }
+        if (j < surface.size() - 1 && surface[i][j + 1] <= surface[i][j]) {
+          lower = false;
+          if (surface[i][j + 1] < min_neighbor) {
+            min_neighbor = surface[i][j + 1];
+          }
+        }
+        if (lower || (min_neighbor < 9 && min_neighbor >= 0)) {
+          cout << label << endl;
+          surface[i][j] = label--;
+          changed = true;
+        } else if (surface[i][j] > min_neighbor) {
+          surface[i][j] = min_neighbor;
+          changed = true;
+        }
+      }
+    }
+  }
+
+  map<int64_t, int64_t> counts;
+  for (int i = 0; i < surface.size(); ++i) {
+    for (int j = 0; j < surface[i].size(); ++j) {
+      if (surface[i][j] != 9) {
+        ++counts[surface[i][j]];
+      }
+      cout << (char)((-surface[i][j] % 26) + 'a' - 1);
+    }
+    cout << endl;
+  }
+
+  vi sizes;
+  for (auto entry : counts) {
+    cout << entry.first << ": " << entry.second << endl;
+    sizes.push_back(entry.second);
+  }
+  sort(sizes.begin(), sizes.end());
+  return sizes[sizes.size() - 1] * sizes[sizes.size() - 2] * sizes[sizes.size() - 3];
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
