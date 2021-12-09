@@ -16,6 +16,7 @@
 #include <deque>
 #include <sstream>
 #include <algorithm>
+#include <functional>
 extern "C" {
 #include <Windows.h>
 }
