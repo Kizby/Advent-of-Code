@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 10;
+const int64_t DAY = 11;
 const int64_t PART = 1;
-
-int64_t day10_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day10_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day11_1(ifstream &&in) {
   int64_t result = 0;
@@ -997,6 +985,115 @@ int64_t day9_2(ifstream &&in) {
   }
   sort(sizes.begin(), sizes.end());
   return sizes[sizes.size() - 1] * sizes[sizes.size() - 2] * sizes[sizes.size() - 3];
+}
+
+// find the first non-matching bracket on each line
+int64_t day10_1(ifstream &&in) {
+  int64_t result = 0;
+
+  string line;
+  while (getline(in, line)) {
+    vector<char> stack;
+    bool done = false;
+    for (int i = 0; !done && i < line.size(); ++i) {
+      switch (line[i]) {
+      case '(': stack.push_back(')'); break;
+      case '[': stack.push_back(']'); break;
+      case '{': stack.push_back('}'); break;
+      case '<': stack.push_back('>'); break;
+      case ')': if (stack[stack.size() - 1] != line[i]) {
+        result += 3;
+        done = true;
+      } else {
+        stack.pop_back();
+      }
+              break;
+      case ']': if (stack[stack.size() - 1] != line[i]) {
+        result += 57;
+        done = true;
+      } else {
+        stack.pop_back();
+      }
+              break;
+      case '}': if (stack[stack.size() - 1] != line[i]) {
+        result += 1197;
+        done = true;
+      } else {
+        stack.pop_back();
+      }
+              break;
+      case '>': if (stack[stack.size() - 1] != line[i]) {
+        result += 25137;
+        done = true;
+      } else {
+        stack.pop_back();
+      }
+              break;
+      }
+    }
+  }
+
+  return result;
+}
+
+// for lines without a non-matching bracket, find the closing sequence
+int64_t day10_2(ifstream &&in) {
+  int64_t result = 0;
+
+  vi scores;
+  string line;
+  while (getline(in, line)) {
+    vector<char> stack;
+    bool done = false;
+    for (int i = 0; !done && i < line.size(); ++i) {
+      switch (line[i]) {
+      case '(': stack.push_back(')'); break;
+      case '[': stack.push_back(']'); break;
+      case '{': stack.push_back('}'); break;
+      case '<': stack.push_back('>'); break;
+      case ')': if (stack[stack.size() - 1] != line[i]) {
+        done = true;
+      } else {
+        stack.pop_back();
+      }
+              break;
+      case ']': if (stack[stack.size() - 1] != line[i]) {
+        done = true;
+      } else {
+        stack.pop_back();
+      }
+              break;
+      case '}': if (stack[stack.size() - 1] != line[i]) {
+        done = true;
+      } else {
+        stack.pop_back();
+      }
+              break;
+      case '>': if (stack[stack.size() - 1] != line[i]) {
+        done = true;
+      } else {
+        stack.pop_back();
+      }
+              break;
+      }
+    }
+    if (!done) {
+      int64_t score = 0;
+      for (int i = stack.size() - 1; i >= 0; --i) {
+        score *= 5;
+        switch (stack[i]) {
+        case ')': score += 1; break;
+        case ']': score += 2; break;
+        case '}': score += 3; break;
+        case '>': score += 4; break;
+        }
+      }
+      scores.push_back(score);
+    }
+  }
+  ranges::sort(scores);
+
+  return scores[scores.size() / 2];
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
