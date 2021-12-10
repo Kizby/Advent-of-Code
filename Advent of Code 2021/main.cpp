@@ -942,7 +942,7 @@ int64_t day9_2(ifstream &&in) {
           continue;
         }
         bool lower = true;
-        int min_neighbor = 9;
+        int64_t min_neighbor = 9;
         if (i > 0 && surface[i - 1][j] <= surface[i][j]) {
           lower = false;
           if (surface[i - 1][j] < min_neighbor) {
