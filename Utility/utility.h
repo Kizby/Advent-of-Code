@@ -1,8 +1,10 @@
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#pragma warning(disable : 4996)
 
 #define CPPHTTPLIB_OPENSSL_SUPPORT
+#define OPENSSL_NO_DEPRECATED_3_0
 #pragma warning(push, 0)
 #include "httplib.h"
 #include "picojson.h"
