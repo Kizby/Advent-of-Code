@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 11;
+const int64_t DAY = 12;
 const int64_t PART = 1;
-
-int64_t day11_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day11_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day12_1(ifstream &&in) {
   int64_t result = 0;
@@ -1079,7 +1067,7 @@ int64_t day10_2(ifstream &&in) {
     }
     if (!done) {
       int64_t score = 0;
-      for (int i = stack.size() - 1; i >= 0; --i) {
+      for (int64_t i = stack.size() - 1; i >= 0; --i) {
         score *= 5;
         switch (stack[i]) {
         case ')': score += 1; break;
@@ -1094,6 +1082,129 @@ int64_t day10_2(ifstream &&in) {
   ranges::sort(scores);
 
   return scores[scores.size() / 2];
+}
+
+// measure synchronizing flashes in field of brightening energies
+int64_t day11_1(ifstream&& in) {
+    int64_t result = 0;
+    //in = ifstream("../TextFile2.txt");
+
+    vector<vi> energy;
+    string line;
+    while (getline(in, line)) {
+        vi one = {};
+        for (char c : line) {
+            one.push_back(c - '0');
+        }
+        energy.push_back(one);
+    }
+
+    for (int i = 0; i < 100; ++i) {
+        vector<vi> next(energy);
+        for (int j = 0; j < next.size(); ++j) {
+            for (int k = 0; k < next[j].size(); ++k) {
+                cout << (char)('0' + next[j][k]);
+                ++next[j][k];
+            }
+            cout << endl;
+        }
+        cout << endl;
+        bool changed = true;
+        while (changed) {
+            changed = false;
+            for (int j = 0; j < next.size(); ++j) {
+                for (int k = 0; k < next[j].size(); ++k) {
+                    if (next[j][k] > 9 && energy[j][k] != -1) {
+                        energy[j][k] = -1;
+                        ++result;
+                        changed = true;
+                        for (int l = (j > 0 ? j - 1 : j); l < (j < next.size() - 1 ? j + 2 : j + 1); ++l) {
+                            for (int m = (k > 0 ? k - 1 : k); m < (k < next.size() - 1 ? k + 2 : k + 1); ++m) {
+                                if (l == j && m == k) {
+                                    continue;
+                                }
+                                ++next[l][m];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (int j = 0; j < next.size(); ++j) {
+            for (int k = 0; k < next[j].size(); ++k) {
+                if (next[j][k] > 9) {
+                    next[j][k] = 0;
+                }
+            }
+        }
+        energy = next;
+    }
+    return result;
+}
+
+// when do they synchronize?
+int64_t day11_2(ifstream&& in) {
+    int64_t result = 0;
+    in = ifstream("../TextFile2.txt");
+
+    vector<vi> energy;
+    string line;
+    while (getline(in, line)) {
+        vi one = {};
+        for (char c : line) {
+            one.push_back(c - '0');
+        }
+        energy.push_back(one);
+    }
+
+    for (int i = 0;; ++i) {
+        vector<vi> next(energy);
+        for (int j = 0; j < next.size(); ++j) {
+            for (int k = 0; k < next[j].size(); ++k) {
+                cout << (char)('0' + next[j][k]);
+                ++next[j][k];
+            }
+            cout << endl;
+        }
+        cout << endl;
+        bool changed = true;
+        while (changed) {
+            changed = false;
+            for (int j = 0; j < next.size(); ++j) {
+                for (int k = 0; k < next[j].size(); ++k) {
+                    if (next[j][k] > 9 && energy[j][k] != -1) {
+                        energy[j][k] = -1;
+                        ++result;
+                        changed = true;
+                        for (int l = (j > 0 ? j - 1 : j); l < (j < next.size() - 1 ? j + 2 : j + 1); ++l) {
+                            for (int m = (k > 0 ? k - 1 : k); m < (k < next.size() - 1 ? k + 2 : k + 1); ++m) {
+                                if (l == j && m == k) {
+                                    continue;
+                                }
+                                ++next[l][m];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        bool allFlashed = true;
+        for (int j = 0; j < next.size(); ++j) {
+            for (int k = 0; k < next[j].size(); ++k) {
+                if (next[j][k] > 9) {
+                    next[j][k] = 0;
+                }
+                else {
+                    allFlashed = false;
+                }
+            }
+        }
+        if (allFlashed) {
+            return i + 1;
+        }
+        energy = next;
+    }
+    return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
