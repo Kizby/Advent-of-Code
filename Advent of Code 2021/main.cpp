@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 12;
+const int64_t DAY = 13;
 const int64_t PART = 1;
-
-int64_t day12_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day12_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day13_1(ifstream &&in) {
   int64_t result = 0;
@@ -1205,6 +1193,140 @@ int64_t day11_2(ifstream&& in) {
         energy = next;
     }
     return result;
+}
+
+// counts paths from start to end that don't pass thru lowercase rooms more than once
+int64_t day12_1(ifstream &&in) {
+  int64_t result = 0;
+  //in = ifstream("../TextFile4.txt");
+  map<string, vs> edges;
+  for (auto tokens : split(split(slurp(in)), "-")) {
+    edges[tokens[0]].push_back(tokens[1]);
+    edges[tokens[1]].push_back(tokens[0]);
+  }
+
+  vector<set<vs>> paths;
+  paths.push_back({{"start"}});
+  bool changed = true;
+  for (int i = 1; changed; ++i) {
+    changed = false;
+    paths.push_back({});
+    for (auto path : paths[i - 1]) {
+      for (auto edge : edges[path[path.size() - 1]]) {
+        bool found = false;
+        for (int j = 0; islower(edge[0]) && j < path.size(); ++j) {
+          if (path[j] == edge) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          vs next(path);
+          next.push_back(edge);
+          paths[i].insert(next);
+          changed = true;
+          if (edge == "end") {
+            /*for (auto str : next) {
+              cout << str << ",";
+            }*/
+            cout << endl;
+            ++result;
+          }
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+// counts paths from start to end that don't pass thru lowercase rooms more than once except for one can be visited twice
+int64_t day12_2(ifstream &&in) {
+  int64_t result = 0;
+  //in = ifstream("../TextFile5.txt");
+  map<string, vs> edges;
+  for (auto tokens : split(split(slurp(in)), "-")) {
+    edges[tokens[0]].push_back(tokens[1]);
+    edges[tokens[1]].push_back(tokens[0]);
+  }
+
+  vector<set<vs>> paths;
+  vector<set<vs>> paths_dupd;
+  paths.push_back({{"start"}});
+  paths_dupd.push_back({});
+  bool changed = true;
+  for (int i = 1; changed; ++i) {
+    changed = false;
+    paths.push_back({});
+    paths_dupd.push_back({});
+    for (auto path : paths[i - 1]) {
+      for (auto edge : edges[path[path.size() - 1]]) {
+        if (edge == "start") {
+          continue;
+        }
+        int found = 0;
+        for (int j = 0; (islower(edge[0]) && found < 2) && j < path.size(); ++j) {
+          if (path[j] == edge) {
+            if (edge == "end") {
+              found = 2;
+            }
+            ++found;
+          }
+        }
+        if (found < 2) {
+          vs next(path);
+          next.push_back(edge);
+          if (found == 0) {
+            paths[i].insert(next);
+          } else {
+            paths_dupd[i].insert(next);
+          }
+          changed = true;
+          if (edge == "end") {
+            /*/for (auto str : next) {
+              cout << str << ",";
+            }
+            cout << endl;*/
+            ++result;
+            if (result % 10000 == 0) {
+              cout << result << " (" << next.size() << ")" << endl;
+            }
+          }
+        }
+      }
+    }
+    for (auto path : paths_dupd[i - 1]) {
+      for (auto edge : edges[path[path.size() - 1]]) {
+        if (edge == "start") {
+          continue;
+        }
+        int found = 0;
+        for (int j = 0; (islower(edge[0]) && found < 2) && j < path.size(); ++j) {
+          if (path[j] == edge) {
+            ++found;
+          }
+        }
+        if (found < 1) {
+          vs next(path);
+          next.push_back(edge);
+          paths_dupd[i].insert(next);
+          changed = true;
+          if (edge == "end") {
+            /*/for (auto str : next) {
+              cout << str << ",";
+            }
+            cout << endl;*/
+            ++result;
+            if (result % 10000 == 0) {
+              cout << result << " (" << next.size() << ")" << endl;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
