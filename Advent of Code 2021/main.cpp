@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 13;
+const int64_t DAY = 14;
 const int64_t PART = 1;
-
-int64_t day13_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day13_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day14_1(ifstream &&in) {
   int64_t result = 0;
@@ -1327,6 +1315,93 @@ int64_t day12_2(ifstream &&in) {
   }
 
   return result;
+}
+
+// apply a single fold instruction to a field of dots and count them
+int64_t day13_1(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  set<vi> dots;
+  while (getline(in, line)) {
+    if (line == "") {
+      break;
+    }
+    dots.insert(map_to_num(split(line, ",")));
+  }
+  set<vi> next;
+  getline(in, line);
+  int64_t along = stoll(line.substr(13));
+  switch (line[11]) {
+  case 'x':
+    for (auto dot : dots) {
+      if (dot[0] < along) {
+        next.insert(dot);
+      } else {
+        next.insert({2 * along - dot[0], dot[1]});
+      }
+    }
+    break;
+  case 'y':
+    for (auto dot : dots) {
+      if (dot[1] < along) {
+        next.insert(dot);
+      } else {
+        next.insert({dot[0], 2 * along - dot[1]});
+      }
+    }
+    break;
+  }
+  return next.size();
+}
+
+// apply a set of fold instructions to a field of dots and render the result to the screen
+// (oops, left all the old dots, but the solution is still visible lol)
+int64_t day13_2(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  set<vi> dots;
+  while (getline(in, line)) {
+    if (line == "") {
+      break;
+    }
+    dots.insert(map_to_num(split(line, ",")));
+  }
+  set<vi> next;
+  while (getline(in, line)) {
+    int64_t along = stoll(line.substr(13));
+    switch (line[11]) {
+    case 'x':
+      for (auto dot : dots) {
+        if (dot[0] < along) {
+          next.insert(dot);
+        } else {
+          next.insert({2 * along - dot[0], dot[1]});
+        }
+      }
+      break;
+    case 'y':
+      for (auto dot : dots) {
+        if (dot[1] < along) {
+          next.insert(dot);
+        } else {
+          next.insert({dot[0], 2 * along - dot[1]});
+        }
+      }
+      break;
+    }
+    dots = next;
+  }
+  for (int y = 0; y < 120; ++y) {
+    for (int x = 0; x < 120; ++x) {
+      if (dots.contains({x, y})) {
+        cout << "#";
+      } else {
+        cout << " ";
+      }
+    }
+    cout << endl;
+  }
+  return next.size();
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
