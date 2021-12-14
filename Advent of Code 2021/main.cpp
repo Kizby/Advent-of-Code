@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 14;
+const int64_t DAY = 15;
 const int64_t PART = 1;
-
-int64_t day14_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day14_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day15_1(ifstream &&in) {
   int64_t result = 0;
@@ -1402,6 +1390,92 @@ int64_t day13_2(ifstream &&in) {
     cout << endl;
   }
   return next.size();
+}
+
+// apply a substitution rule 10 times, find difference between most and least common element
+int64_t day14_1(ifstream &&in) {
+  int64_t result = 0;
+  string temp;
+  getline(in, temp);
+  string line;
+  getline(in, line);
+  vector<vs> rules;
+  while (getline(in, line)) {
+    rules.push_back(split(line, " -> "));
+  }
+  string current = temp;
+  for (int i = 0; i < 10; ++i) {
+    for (int j = 0; j < current.length() - 1; ++j) {
+      for (int k = 0; k < rules.size(); ++k) {
+        if (current[j] == rules[k][0][0] && current[j + 1] == rules[k][0][1]) {
+          current = current.substr(0, j + 1) + rules[k][1] + current.substr(j + 1);
+          ++j;
+          break;
+        }
+      }
+    }
+  }
+
+  auto histo = histogram<char>(current);
+  int min = 9999, max = 0;
+  for (auto entry : histo) {
+    if (entry.second < min) {
+      min = entry.second;
+    }
+    if (entry.second > max) {
+      max = entry.second;
+    }
+  }
+  return max - min;
+}
+
+// apply it 40 times (secretly falling back to a digraph frequency chart)
+int64_t day14_2(ifstream &&in) {
+  int64_t result = 0;
+  string temp;
+  getline(in, temp);
+  string line;
+  getline(in, line);
+  map<string, string> rules;
+  while (getline(in, line)) {
+    auto rule = split(line, " -> ");
+    rules[rule[0]] = rule[1];
+  }
+  string current = temp;
+  map<string, int64_t> freq;
+  for (int j = 0; j < current.length() - 1; ++j) {
+    ++freq[current.substr(j, 2)];
+  }
+  for (int i = 0; i < 40; ++i) {
+    map<string, int64_t> nextFreq;
+    for (auto entry : freq) {
+      if (rules.contains(entry.first)) {
+        nextFreq[entry.first.substr(0, 1) + rules[entry.first]] += entry.second;
+        nextFreq[rules[entry.first] + entry.first.substr(1, 1)] += entry.second;
+      } else {
+        nextFreq[entry.first] += entry.second;
+      }
+    }
+    freq = nextFreq;
+  }
+
+  map<char, int64_t> histo;
+  for (auto entry : freq) {
+    histo[entry.first[0]] += entry.second;
+  }
+  histo[temp[temp.length() - 1]]++;
+
+  int64_t max = -1, min = -1;
+  for (auto entry : histo) {
+    if (entry.second > max || max == -1) {
+      max = entry.second;
+    }
+    if (entry.second < min || min == -1) {
+      min = entry.second;
+    }
+  }
+
+  return max - min;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
