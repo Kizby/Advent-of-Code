@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 15;
+const int64_t DAY = 16;
 const int64_t PART = 1;
-
-int64_t day15_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day15_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day16_1(ifstream &&in) {
   int64_t result = 0;
@@ -1476,6 +1464,128 @@ int64_t day14_2(ifstream &&in) {
   }
 
   return max - min;
+}
+
+// find lowest-cost path from top left to bottom right corner of a map
+int64_t day15_1(ifstream &&in) {
+  int64_t result = 0;
+  vector<vi> map;
+  string line;
+  while (getline(in, line)) {
+    map.push_back({});
+    for (char c : line) {
+      map[map.size() - 1].push_back(c - '0');
+    }
+  }
+  vector<vi> costs;
+  for (int i = 0; i < map.size(); ++i) {
+    costs.push_back({});
+    for (int j = 0; j < map[i].size(); ++j) {
+      costs[i].push_back({-1});
+    }
+  }
+  costs[0][0] = 0;
+  bool changed = true;
+  while (changed) {
+    changed = false;
+    for (int i = 0; i < map.size(); ++i) {
+      for (int j = 0; j < map[i].size(); ++j) {
+        if (i > 0 && costs[i - 1][j] != -1 && (costs[i][j] == -1 || costs[i][j] > costs[i - 1][j] + map[i][j])) {
+          costs[i][j] = costs[i - 1][j] + map[i][j];
+          changed = true;
+        }
+        if (i < map.size() - 1 && costs[i + 1][j] != -1 && (costs[i][j] == -1 || costs[i][j] > costs[i + 1][j] + map[i][j])) {
+          costs[i][j] = costs[i + 1][j] + map[i][j];
+          changed = true;
+        }
+        if (j > 0 && costs[i][j - 1] != -1 && (costs[i][j] == -1 || costs[i][j] > costs[i][j - 1] + map[i][j])) {
+          costs[i][j] = costs[i][j - 1] + map[i][j];
+          changed = true;
+        }
+        if (j < map.size() - 1 && costs[i][j + 1] != -1 && (costs[i][j] == -1 || costs[i][j] > costs[i][j + 1] + map[i][j])) {
+          costs[i][j] = costs[i][j + 1] + map[i][j];
+          changed = true;
+        }
+      }
+    }
+  }
+
+  return costs[costs.size() - 1][costs[0].size() - 1];
+}
+
+// same, but tesselate the map to 5x5 with mutation
+int64_t day15_2(ifstream &&in) {
+  int64_t result = 0;
+  vector<vi> map;
+  string line;
+  //in = ifstream("../TextFile1.txt");
+  while (getline(in, line)) {
+    map.push_back({});
+    for (char c : line) {
+      map[map.size() - 1].push_back(c - '0');
+    }
+  }
+  auto origi = map.size();
+  auto origj = map[0].size();
+  for (int i = 0; i < 5; ++i) {
+    if (i > 0) {
+      for (int j = 0; j < origi; j++) {
+        map.push_back({});
+      }
+    }
+    for (int j = 0; j < 5; ++j) {
+      if (i == 0 && j == 0) {
+        continue;
+      }
+      if (j > 0) {
+        for (int k = 0; k < origi; ++k) {
+          for (int l = 0; l < origj; ++l) {
+            map[origi * i + k].push_back(map[origi * i + k][origj * (j - 1) + l] % 9 + 1);
+          }
+        }
+      } else {
+        for (int k = 0; k < origi; ++k) {
+          for (int l = 0; l < origj; ++l) {
+            map[origi * i + k].push_back(map[origi * (i - 1) + k][origj * j + l] % 9 + 1);
+          }
+        }
+      }
+    }
+  }
+  vector<vi> costs;
+  for (int i = 0; i < map.size(); ++i) {
+    costs.push_back({});
+    for (int j = 0; j < map[i].size(); ++j) {
+      costs[i].push_back({-1});
+    }
+  }
+  costs[0][0] = 0;
+  bool changed = true;
+  while (changed) {
+    changed = false;
+    for (int i = 0; i < map.size(); ++i) {
+      for (int j = 0; j < map[i].size(); ++j) {
+        if (i > 0 && costs[i - 1][j] != -1 && (costs[i][j] == -1 || costs[i][j] > costs[i - 1][j] + map[i][j])) {
+          costs[i][j] = costs[i - 1][j] + map[i][j];
+          changed = true;
+        }
+        if (i < map.size() - 1 && costs[i + 1][j] != -1 && (costs[i][j] == -1 || costs[i][j] > costs[i + 1][j] + map[i][j])) {
+          costs[i][j] = costs[i + 1][j] + map[i][j];
+          changed = true;
+        }
+        if (j > 0 && costs[i][j - 1] != -1 && (costs[i][j] == -1 || costs[i][j] > costs[i][j - 1] + map[i][j])) {
+          costs[i][j] = costs[i][j - 1] + map[i][j];
+          changed = true;
+        }
+        if (j < map.size() - 1 && costs[i][j + 1] != -1 && (costs[i][j] == -1 || costs[i][j] > costs[i][j + 1] + map[i][j])) {
+          costs[i][j] = costs[i][j + 1] + map[i][j];
+          changed = true;
+        }
+      }
+    }
+  }
+
+  return costs[costs.size() - 1][costs[0].size() - 1];
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
