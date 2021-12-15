@@ -48,6 +48,14 @@ ifstream input(int year, int day) {
 
 // from https://stackoverflow.com/a/9437426
 vs split(const string& input, const string& regex) {
+	if (regex == "") {
+		vs result;
+		// special case, just return the characters as substrings
+		for (char c : input) {
+			result.push_back(string(1, c));
+		}
+		return result;
+	}
 	// passing -1 as the submatch index parameter performs splitting
 	std::regex re(regex);
 	sregex_token_iterator
@@ -61,9 +69,19 @@ vs split(const string& input, const string& regex) {
 }
 
 vector<vs> split(const vs& input, const string& regex) {
+	vector<vs> result;
+	if (regex == "") {
+		// special case, just return the characters as substrings
+		for (auto str : input) {
+			result.push_back({});
+			for (char c : str) {
+				result[result.size() - 1].push_back(string(1, c));
+			}
+		}
+		return result;
+	}
 	// passing -1 as the submatch index parameter performs splitting
 	std::regex re(regex);
-	vector<vs> result;
 	for (const auto& line : input) {
 		sregex_token_iterator
 			first{ line.begin(), line.end(), re, -1 },
@@ -73,10 +91,17 @@ vector<vs> split(const vs& input, const string& regex) {
 	return result;
 }
 
-vi map_to_num(const vs& vec) {
+vi map_to_num(const vs &vec) {
 	vi result;
 	result.resize(vec.size());
-	transform(vec.begin(), vec.end(), result.begin(), [](const string& s) { return s.empty() ? 0 : stoll(s); });
+	transform(vec.begin(), vec.end(), result.begin(), [](const string &s) { return s.empty() ? 0 : stoll(s); });
+	return result;
+}
+
+vector<vi> map_to_num(const vector<vs> &vec) {
+	vector<vi> result;
+	result.resize(vec.size());
+	transform(vec.begin(), vec.end(), result.begin(), [](const vs &v) { return map_to_num(v); });
 	return result;
 }
 

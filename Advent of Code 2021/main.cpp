@@ -1588,6 +1588,69 @@ int64_t day15_2(ifstream &&in) {
   return costs[costs.size() - 1][costs[0].size() - 1];
 }
 
+int64_t day15_1_clean(ifstream &&in) {
+  int64_t result = 0;
+  auto map = map_to_num(split(split(slurp(in)), ""));
+  auto costs = grid(map.size(), map[0].size(), -1ll);
+  costs[0][0] = 0;
+
+  bool changed = true;
+  while (changed) {
+    changed = false;
+    for (auto cell : cells(costs)) {
+      for (auto adj : adjacent(cell)) {
+        if (*adj == -1) {
+          continue;
+        }
+        auto cost = cell(map) + *adj;
+        if (*cell == -1 || cost < *cell) {
+          *cell = cost;
+          changed = true;
+        }
+      }
+    }
+  }
+  return costs[costs.size() - 1][costs[0].size() - 1];
+}
+
+int64_t day15_2_clean(ifstream &&in) {
+  int64_t result = 0;
+  //in = ifstream("../TextFile2.txt");
+  auto base_map = map_to_num(split(split(slurp(in)), ""));
+
+  auto map = base_map;
+  for (int i = 1; i < 5; ++i) {
+    base_map = transform<int64_t>(base_map, [](int64_t a) { return (a % 9) + 1; });
+    map = concat_right(map, base_map);
+  }
+  base_map = map;
+  for (int j = 1; j < 5; ++j) {
+    base_map = transform<int64_t>(base_map, [](int64_t a) { return (a % 9) + 1; });
+    map = concat_down(map, base_map);
+  }
+
+  auto costs = grid(map.size(), map[0].size(), -1ll);
+  costs[0][0] = 0;
+
+  bool changed = true;
+  while (changed) {
+    changed = false;
+    for (auto cell : cells(costs)) {
+      for (auto adj : adjacent(cell)) {
+        if (*adj == -1) {
+          continue;
+        }
+        auto cost = cell(map) + *adj;
+        if (*cell == -1 || cost < *cell) {
+          *cell = cost;
+          changed = true;
+        }
+      }
+    }
+  }
+  return costs[costs.size() - 1][costs[0].size() - 1];
+}
+
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
   {day1_1, day1_2},
   {day2_1, day2_2},

@@ -39,6 +39,7 @@ vs split(const string& input, const string& regex = "\n");
 vector<vs> split(const vs& input, const string& regex = "\n");
 
 vi map_to_num(const vs& vec);
+vector<vi> map_to_num(const vector<vs> &vec);
 vi get_nums(ifstream &in, const string& regex = "\n");
 
 vector<vz> permutations(size_t start, size_t end);
@@ -66,6 +67,11 @@ int64_t min(vi vec);
 int64_t max(vi vec);
 
 vector<vi> choose(int64_t n, int64_t k);
+
+template <typename T>
+vector<vector<T>> grid(size_t rows, size_t columns, T value) {
+	return vector(rows, vector(columns, value));
+}
 
 template <typename T, typename C>
 unordered_map<T, int> histogram(C container) {
@@ -137,6 +143,152 @@ set<T> set_sym_diff(const set<T> &a, const set<T> &b) {
 		}
 	}
 	return result;
+}
+
+
+template <typename T>
+struct CellPointer {
+  vector<vector<T>> &backing_grid;
+  size_t row;
+  size_t col;
+  CellPointer(const CellPointer &other) = default;
+  CellPointer(vector<vector<T>> &backing_grid, size_t row, size_t col) : backing_grid(backing_grid), row(row), col(col) {}
+  T &operator*() {
+    return backing_grid[row][col];
+  }
+  T &operator()(vector<vector<T>> &grid) {
+    return grid[row][col];
+  }
+};
+
+template<typename T>
+class CellIterator {
+  vector<vector<T>> &backing_grid;
+  size_t row;
+  size_t col;
+
+  CellIterator(vector<vector<T>> &backing_grid, size_t row, size_t col) : backing_grid(backing_grid), row(row), col(col) {}
+
+public:
+  CellIterator(vector<vector<T>> &backing_grid) : CellIterator(backing_grid, 0, 0) {}
+
+  CellIterator begin() {
+    row = 0;
+    col = 0;
+    return *this;
+  }
+  CellIterator end() {
+    return CellIterator(backing_grid, backing_grid.size(), 0);
+  }
+  CellIterator &operator++() {
+    ++col;
+    if (col >= backing_grid.size() == 0 ? 0 : backing_grid[0].size()) {
+      col = 0;
+      ++row;
+    }
+    return *this;
+  }
+  bool operator!=(const CellIterator &other) {
+    return &backing_grid != &other.backing_grid || row != other.row || col != other.col;
+  }
+  CellPointer<T> operator*() {
+    return CellPointer{backing_grid, row, col};
+  }
+};
+
+template<typename T>
+CellIterator<T> cells(vector<vector<T>> &source) {
+  return CellIterator(source);
+}
+
+template<typename T>
+vector<CellPointer<T>> adjacent(CellPointer<T> cell, bool cardinal = true) {
+  vector<CellPointer<T>> result;
+  if (cell.row > 0) {
+    result.push_back(CellPointer<T>{cell.backing_grid, cell.row - 1, cell.col});
+    if (!cardinal) {
+      if (cell.col > 0) {
+        result.push_back(CellPointer<T>{cell.backing_grid, cell.row - 1, cell.col - 1});
+      }
+      if (cell.col < cell.backing_grid[0].size() - 1) {
+        result.push_back(CellPointer<T>{cell.backing_grid, cell.row - 1, cell.col + 1});
+      }
+    }
+  }
+  if (cell.col > 0) {
+    result.push_back(CellPointer<T>{cell.backing_grid, cell.row, cell.col - 1});
+  }
+  if (cell.col < cell.backing_grid[0].size() - 1) {
+    result.push_back(CellPointer<T>{cell.backing_grid, cell.row, cell.col + 1});
+  }
+  if (cell.row < cell.backing_grid.size() - 1) {
+    result.push_back(CellPointer<T>{cell.backing_grid, cell.row + 1, cell.col});
+    if (!cardinal) {
+      if (cell.col > 0) {
+        result.push_back(CellPointer<T>{cell.backing_grid, cell.row + 1, cell.col - 1});
+      }
+      if (cell.col < cell.backing_grid[0].size() - 1) {
+        result.push_back(CellPointer<T>{cell.backing_grid, cell.row + 1, cell.col + 1});
+      }
+    }
+  }
+  return result;
+}
+
+template<typename T>
+vector<vector<T>> concat_right(vector<vector<T>> a, vector<vector<T>> b, T fill = T{}) {
+  if (a.size() == 0) {
+    return b;
+  }
+  if (b.size() == 0) {
+    return a;
+  }
+  auto result = a;
+  while (b.size() > result.size()) {
+    result.push_back(vector(a[0].size(), fill));
+  }
+  for (int i = 0; i < b.size() || i < result.size(); ++i) {
+    result[i].resize(a[0].size() + b[0].size(), fill);
+    for (int j = 0; j < b[0].size(); ++j) {
+      if (i < b.size()) {
+        result[i][a[0].size() + j] = b[i][j];
+      }
+    }
+  }
+  return result;
+}
+
+template<typename T>
+vector<vector<T>> concat_down(vector<vector<T>> a, vector<vector<T>> b, T fill = T{}) {
+  if (a.size() == 0) {
+    return b;
+  }
+  if (b.size() == 0) {
+    return a;
+  }
+  auto result = a;
+  if (b[0].size() > result[0].size()) {
+    for (auto &row : result) {
+      row.resize(b[0].size(), fill);
+    }
+  }
+  for (auto row : b) {
+    row.resize(result[0].size(), fill);
+    result.push_back(row);
+  }
+  return result;
+}
+
+template<typename T>
+vector<vector<T>> transform(const vector<vector<T>> &in, function<T(T)> map) {
+  vector<vector<T>> result;
+  for (size_t i = 0; i < in.size(); ++i) {
+    result.push_back({});
+    for (size_t j = 0; j < in[i].size(); ++j) {
+      result[i].push_back(map(in[i][j]));
+    }
+  }
+  return result;
 }
 
 void copy(string s);
