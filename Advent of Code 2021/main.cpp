@@ -5,118 +5,6 @@ using namespace std;
 const int64_t DAY = 17;
 const int64_t PART = 1;
 
-struct packet_t {
-  int version;
-  int type;
-  bool is_raw;
-  vector<bool> raw_bits;
-  vector<packet_t> subpackets;
-  int64_t result;
-};
-
-packet_t parsePacket(vector<bool> bits, size_t &index, int64_t &sum) {
-  packet_t result;
-  result.version = (bits[index] << 2) + (bits[index + 1] << 1) + bits[index + 2];
-  cout << result.version << endl;
-  sum += result.version;
-  index += 3;
-  result.type = (bits[index] << 2) + (bits[index + 1] << 1) + bits[index + 2];
-  index += 3;
-  cout << result.type << endl;
-  switch (result.type) {
-  case 4:
-  {
-    cout << "Literal: ";
-    result.result = 0;
-    bool next;
-    do {
-      next = bits[index++];
-      result.result <<= 4;
-      result.result += (bits[index] << 3) + (bits[index + 1] << 2) + (bits[index + 2] << 1) + bits[index + 3];
-      index += 4;
-    } while (next);
-    cout << result.result << endl;
-    break;
-  }
-  default:
-  {
-    result.is_raw = !bits[index];
-    if (!bits[index++]) {
-      size_t length = 0;
-      for (int i = 0; i < 15; ++i) {
-        length <<= 1;
-        length += bits[index++];
-      }
-      cout << "Raw: " << length << endl;
-      size_t finish = index + length;
-      while (index < finish) {
-        result.subpackets.push_back(parsePacket(bits, index, sum));
-      }
-    } else {
-      size_t subpacket_count = 0;
-      for (int i = 0; i < 11; ++i) {
-        subpacket_count <<= 1;
-        subpacket_count += bits[index++];
-      }
-      cout << "Subpackets: " << subpacket_count << endl;
-      for (int i = 0; i < subpacket_count; ++i) {
-        result.subpackets.push_back(parsePacket(bits, index, sum));
-      }
-    }
-    result.result = 0;
-    switch (result.type) {
-    case 0:
-    {
-      for (auto packet : result.subpackets) {
-        result.result += packet.result;
-      }
-      break;
-    }
-    case 1:
-    {
-      result.result = 1;
-      for (auto packet : result.subpackets) {
-        result.result *= packet.result;
-      }
-      break;
-    }
-    case 2:
-    {
-      result.result = result.subpackets[0].result;
-      for (int i = 1; i < result.subpackets.size(); ++i) {
-        result.result = min(result.result, result.subpackets[i].result);
-      }
-      break;
-    }
-    case 3:
-    {
-      result.result = 0;
-      for (auto packet : result.subpackets) {
-        result.result = max(result.result, packet.result);
-      }
-      break;
-    }
-    case 5:
-    {
-      result.result = result.subpackets[0].result > result.subpackets[1].result;
-      break;
-    }
-    case 6:
-    {
-      result.result = result.subpackets[0].result < result.subpackets[1].result;
-      break;
-    }
-    case 7:
-    {
-      result.result = result.subpackets[0].result == result.subpackets[1].result;
-      break;
-    }
-    }
-  }
-  }
-  return result;
-}
-
 int64_t day17_1(ifstream &&in) {
   int64_t result = 0;
 
@@ -1766,7 +1654,7 @@ int64_t day16_1(ifstream &&in) {
   }
   size_t index = 0;
   int64_t sum = 0;
-  auto packet = parsePacket(bits, index, sum);
+  auto packet = parse_BITS_packet_sum(bits, index, sum);
   return sum;
 }
 
@@ -1785,7 +1673,7 @@ int64_t day16_2(ifstream &&in) {
   }
   size_t index = 0;
   int64_t sum = 0;
-  auto packet = parsePacket(bits, index, sum);
+  auto packet = parse_BITS_packet_sum(bits, index, sum);
   return packet.result;
 }
 

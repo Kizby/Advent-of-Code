@@ -298,3 +298,14 @@ template <typename T>
 void report(T n) {
 	report(to_string(n));
 }
+
+struct BITS_packet_t {
+  int64_t version = 0;
+  int64_t type = 0;
+  vector<BITS_packet_t> subpackets;
+  int64_t result = 0;
+};
+
+int64_t parse_BITS_int(const vector<bool> &bits, size_t &index, size_t size = 0);
+BITS_packet_t parse_BITS_packet(const vector<bool> &bits, size_t &index, int64_t version = -1);
+BITS_packet_t parse_BITS_packet_sum(const vector<bool> &bits, size_t &index, int64_t &sum);

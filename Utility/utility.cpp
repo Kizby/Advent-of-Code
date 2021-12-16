@@ -343,3 +343,125 @@ void report(const string& s) {
 	cout << s << endl;
 	copy(s);
 }
+
+int64_t parse_BITS_int(const vector<bool> &bits, size_t &index, size_t size) {
+	int64_t result = 0;
+	if (size > 0) {
+		for (size_t i = 0; i < size; ++i) {
+			result <<= 1;
+			result += bits[index++];
+		}
+		return result;
+	}
+	bool next;
+	do {
+		next = bits[index++];
+		result <<= 4;
+		result += parse_BITS_int(bits, index, 4);
+	} while (next);
+	return result;
+}
+
+BITS_packet_t parse_BITS_packet(const vector<bool> &bits, size_t &index, int64_t version) {
+	const bool verbose = false;
+	BITS_packet_t result;
+	result.version = parse_BITS_int(bits, index, 3);
+	if (verbose) cout << result.version << endl;
+	result.type = parse_BITS_int(bits, index, 3);
+	if (verbose) cout << result.type << endl;
+	switch (result.type) {
+	case 4:
+	{
+		if (verbose) cout << "Literal: ";
+		result.result = parse_BITS_int(bits, index);
+		if (verbose) cout << result.result << endl;
+		break;
+	}
+	default:
+	{
+		if (!bits[index++]) {
+			size_t length = parse_BITS_int(bits, index, 15);
+			if (verbose) cout << "Raw: " << length << endl;
+			size_t finish = index + length;
+			while (index < finish) {
+				auto packet = parse_BITS_packet(bits, index, version);
+				if (version == -1 || packet.version <= version) {
+					result.subpackets.push_back(packet);
+				}
+			}
+		} else {
+			size_t subpacket_count = parse_BITS_int(bits, index, 11);
+			if (verbose) cout << "Subpackets: " << subpacket_count << endl;
+			for (int i = 0; i < subpacket_count; ++i) {
+				auto packet = parse_BITS_packet(bits, index, version);
+				if (version == -1 || packet.version <= version) {
+					result.subpackets.push_back(packet);
+				}
+			}
+		}
+		if (version > -1 && version > result.version) {
+			return result;
+		}
+		switch (result.type) {
+		case 0:
+		{
+			for (auto packet : result.subpackets) {
+				result.result += packet.result;
+			}
+			break;
+		}
+		case 1:
+		{
+			result.result = 1;
+			for (auto packet : result.subpackets) {
+				result.result *= packet.result;
+			}
+			break;
+		}
+		case 2:
+		{
+			result.result = result.subpackets[0].result;
+			for (int i = 0; i < result.subpackets.size(); ++i) {
+				result.result = min(result.result, result.subpackets[i].result);
+			}
+			break;
+		}
+		case 3:
+		{
+			result.result = 0;
+			for (auto packet : result.subpackets) {
+				result.result = max(result.result, packet.result);
+			}
+			break;
+		}
+		case 5:
+		{
+			result.result = result.subpackets[0].result > result.subpackets[1].result;
+			break;
+		}
+		case 6:
+		{
+			result.result = result.subpackets[0].result < result.subpackets[1].result;
+			break;
+		}
+		case 7:
+		{
+			result.result = result.subpackets[0].result == result.subpackets[1].result;
+			break;
+		}
+		}
+	}
+	}
+	return result;
+}
+
+BITS_packet_t parse_BITS_packet_sum(const vector<bool> &bits, size_t &index, int64_t &sum) {
+	vector<BITS_packet_t> queue{parse_BITS_packet(bits, index)};
+	for (int i = 0; i < queue.size(); ++i) {
+		sum += queue[i].version;
+		for (int j = 0; j < queue[i].subpackets.size(); ++j) {
+			queue.push_back(queue[i].subpackets[j]);
+		}
+	}
+	return queue[0];
+}
