@@ -38,6 +38,20 @@ ifstream input(int year, int day);
 vs split(const string& input, const string& regex = "\n");
 vector<vs> split(const vs& input, const string& regex = "\n");
 
+template<typename T, typename U>
+vector<T> transform(const vector<U> &vec, function<T(const U &)> func) {
+  vector<T> result(vec.size());
+  transform(vec.begin(), vec.end(), result.begin(), func);
+  return result;
+}
+
+template<typename T, typename U>
+vector<T> get_fields(const vector<U> &vec, T U:: *member) {
+  vector<T> result(vec.size());
+  transform(vec.begin(), vec.end(), result.begin(), [member](const U &u) { return u.*member; });
+  return result;
+}
+
 vi map_to_num(const vs& vec);
 vector<vi> map_to_num(const vector<vs> &vec);
 vi get_nums(ifstream &in, const string& regex = "\n");

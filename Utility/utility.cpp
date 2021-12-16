@@ -92,17 +92,11 @@ vector<vs> split(const vs& input, const string& regex) {
 }
 
 vi map_to_num(const vs &vec) {
-	vi result;
-	result.resize(vec.size());
-	transform(vec.begin(), vec.end(), result.begin(), [](const string &s) { return s.empty() ? 0 : stoll(s); });
-	return result;
+	return transform<int64_t, string>(vec, [](const string &s) { return s.empty() ? 0 : stoll(s); });
 }
 
 vector<vi> map_to_num(const vector<vs> &vec) {
-	vector<vi> result;
-	result.resize(vec.size());
-	transform(vec.begin(), vec.end(), result.begin(), [](const vs &v) { return map_to_num(v); });
-	return result;
+	return transform<vi, vs>(vec, [](const vs &vec) {return map_to_num(vec); });
 }
 
 vi get_nums(ifstream &in, const string &regex) {
@@ -402,51 +396,41 @@ BITS_packet_t parse_BITS_packet(const vector<bool> &bits, size_t &index, int64_t
 		if (version > -1 && version > result.version) {
 			return result;
 		}
+		auto results = get_fields(result.subpackets, &BITS_packet_t::result);
 		switch (result.type) {
 		case 0:
 		{
-			for (auto packet : result.subpackets) {
-				result.result += packet.result;
-			}
+			result.result = sum(results);
 			break;
 		}
 		case 1:
 		{
-			result.result = 1;
-			for (auto packet : result.subpackets) {
-				result.result *= packet.result;
-			}
+			result.result = product(results);
 			break;
 		}
 		case 2:
 		{
-			result.result = result.subpackets[0].result;
-			for (int i = 0; i < result.subpackets.size(); ++i) {
-				result.result = min(result.result, result.subpackets[i].result);
-			}
+			result.result = min(results);
 			break;
 		}
 		case 3:
 		{
-			result.result = 0;
-			for (auto packet : result.subpackets) {
-				result.result = max(result.result, packet.result);
-			}
+			result.result = max(results);
 			break;
 		}
 		case 5:
 		{
-			result.result = result.subpackets[0].result > result.subpackets[1].result;
+			result.result = results[0] > results[1];
 			break;
 		}
 		case 6:
 		{
-			result.result = result.subpackets[0].result < result.subpackets[1].result;
+			result.result = results[0] < results[1];
 			break;
 		}
 		case 7:
 		{
-			result.result = result.subpackets[0].result == result.subpackets[1].result;
+			result.result = results[0] == results[1];
 			break;
 		}
 		}
