@@ -397,43 +397,16 @@ BITS_packet_t parse_BITS_packet(const vector<bool> &bits, size_t &index, int64_t
 			return result;
 		}
 		auto results = get_fields(result.subpackets, &BITS_packet_t::result);
-		switch (result.type) {
-		case 0:
-		{
-			result.result = sum(results);
-			break;
-		}
-		case 1:
-		{
-			result.result = product(results);
-			break;
-		}
-		case 2:
-		{
-			result.result = min(results);
-			break;
-		}
-		case 3:
-		{
-			result.result = max(results);
-			break;
-		}
-		case 5:
-		{
-			result.result = results[0] > results[1];
-			break;
-		}
-		case 6:
-		{
-			result.result = results[0] < results[1];
-			break;
-		}
-		case 7:
-		{
-			result.result = results[0] == results[1];
-			break;
-		}
-		}
+		result.result = [&]() -> int64_t {
+			switch (result.type) {
+			case 0: return sum(results);
+			case 1: return product(results);
+			case 2: return min(results);
+			case 3: return max(results);
+			case 5: return results[0] > results[1];
+			case 6: return results[0] < results[1];
+			case 7: return results[0] == results[1];
+			}}();
 	}
 	}
 	return result;
