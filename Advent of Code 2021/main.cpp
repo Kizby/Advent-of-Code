@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 17;
+const int64_t DAY = 18;
 const int64_t PART = 1;
-
-int64_t day17_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day17_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day18_1(ifstream &&in) {
   int64_t result = 0;
@@ -1675,6 +1663,73 @@ int64_t day16_2(ifstream &&in) {
   int64_t sum = 0;
   auto packet = parse_BITS_packet_sum(bits, index, sum);
   return packet.result;
+}
+
+// what's the highest apex of any trajector that hits the target area?
+int64_t day17_1(ifstream&& in) {
+    int64_t result = 0;
+    auto tokens = split(slurp(in), "=");
+    auto x1 = stoll(split(tokens[1], "\\.\\.")[0]);
+    auto x2 = stoll(split(split(tokens[1], "\\.\\.")[1], ",")[0]);
+    auto y1 = stoll(split(tokens[2], "\\.\\.")[0]);
+    auto y2 = stoll(split(tokens[2], "\\.\\.")[1]);
+
+    auto best_y = -200;
+    for (int x = 1; x < 300; ++x) {
+        for (int y = -156; y < 1000; ++y) {
+            int pos[] = { 0, 0 };
+            int vel[] = { x, y };
+            int cur_y = y;
+            while (pos[0] < x2 && pos[1] >= y1) {
+                pos[0] += vel[0];
+                if (vel[0] > 0) vel[0]--;
+                pos[1] += vel[1];
+                vel[1]--;
+                if (pos[1] > cur_y) {
+                    cur_y = pos[1];
+                }
+                if (x1 <= pos[0] && pos[0] <= x2 && y1 <= pos[1] && pos[1] <= y2) {
+                    if (cur_y > best_y) {
+                        best_y = cur_y;
+                    }
+                }
+            }
+        }
+    }
+    return best_y;
+}
+
+// how many trajectories hit the target area?
+int64_t day17_2(ifstream&& in) {
+    int64_t result = 0;
+    auto tokens = split(slurp(in), "=");
+    auto x1 = stoll(split(tokens[1], "\\.\\.")[0]);
+    auto x2 = stoll(split(split(tokens[1], "\\.\\.")[1], ",")[0]);
+    auto y1 = stoll(split(tokens[2], "\\.\\.")[0]);
+    auto y2 = stoll(split(tokens[2], "\\.\\.")[1]);
+
+    auto best_y = -200;
+    for (int x = 1; x < 300; ++x) {
+        for (int y = -156; y < 1000; ++y) {
+            int pos[] = { 0, 0 };
+            int vel[] = { x, y };
+            int cur_y = y;
+            while (pos[0] < x2 && pos[1] >= y1) {
+                pos[0] += vel[0];
+                if (vel[0] > 0) vel[0]--;
+                pos[1] += vel[1];
+                vel[1]--;
+                if (pos[1] > cur_y) {
+                    cur_y = pos[1];
+                }
+                if (x1 <= pos[0] && pos[0] <= x2 && y1 <= pos[1] && pos[1] <= y2) {
+                    ++result;
+                    break;
+                }
+            }
+        }
+    }
+    return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
