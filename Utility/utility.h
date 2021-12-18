@@ -323,3 +323,8 @@ struct BITS_packet_t {
 int64_t parse_BITS_int(const vector<bool> &bits, size_t &index, size_t size = 0);
 BITS_packet_t parse_BITS_packet(const vector<bool> &bits, size_t &index, int64_t version = -1);
 BITS_packet_t parse_BITS_packet_sum(const vector<bool> &bits, size_t &index, int64_t &sum);
+
+
+wstring snailfish_reduce(wstring num);
+int64_t snailfish_magnitude(wstring num, size_t& index);
+void parens(wstring& in);

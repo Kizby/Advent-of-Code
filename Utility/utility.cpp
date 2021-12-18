@@ -422,3 +422,63 @@ BITS_packet_t parse_BITS_packet_sum(const vector<bool> &bits, size_t &index, int
 	}
 	return queue[0];
 }
+
+
+wstring snailfish_reduce(wstring num) {
+	int depth = 0;
+	for (int i = 0; i < num.size(); ++i) {
+		if (num[i] == '(') {
+			++depth;
+			if (depth == 5) {
+				for (int j = i - 1; j >= 0; --j) {
+					if (!strchr("(),", num[j])) {
+						num[j] += num[i + 1] - '0';
+						break;
+					}
+				}
+				for (int j = i + 4; j < num.size(); ++j) {
+					if (!strchr("(),", num[j])) {
+						num[j] += num[i + 3] - '0';
+						break;
+					}
+				}//[[a,b],c]
+				num = num.substr(0, i) + L"0" + num.substr(i + 5);
+				return snailfish_reduce(num);
+			}
+		}
+		else if (num[i] == ')') {
+			--depth;
+		}
+	}
+	for (int i = 0; i < num.size(); ++i) {
+		if (!strchr("(),", num[i]) && num[i] > '9') {
+			wstring split = wstring(L"(") + wchar_t(L'0' + (num[i] - L'0') / 2) + L"," + wchar_t(L'0' + (num[i] - L'0') / 2 + (num[i] % 2)) + L")";
+			num = num.substr(0, i) + split + num.substr(i + 1);
+			return snailfish_reduce(num);
+		}
+	}
+	return num;
+}
+
+int64_t snailfish_magnitude(wstring num, size_t& index) {
+	if (num[index] == '(') {
+		++index;
+		auto result = 3 * snailfish_magnitude(num, index);
+		++index;
+		result += 2 * snailfish_magnitude(num, index);
+		++index;
+		return result;
+	}
+	return num[index++] - '0';
+}
+
+void parens(wstring& in) {
+	for (auto& c : in) {
+		if (c == L'[') {
+			c = L'(';
+		}
+		else if (c == L']') {
+			c = L')';
+		}
+	}
+}

@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 18;
+const int64_t DAY = 19;
 const int64_t PART = 1;
-
-int64_t day18_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day18_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day19_1(ifstream &&in) {
   int64_t result = 0;
@@ -1729,6 +1717,55 @@ int64_t day17_2(ifstream&& in) {
             }
         }
     }
+    return result;
+}
+
+int64_t day18_1(ifstream&& in) {
+    int64_t result = 0;
+    size_t index = 0;
+    //cout << snailfish_magnitude(snailfish_reduce("[[[[[7,7],[7,7]],[[8,7],[8,7]]],[[[7,0],[7,7]],9]],[[[[4,2],2],6],[8,7]]]"), index) << endl;
+    //cout << snailfish_magnitude(snailfish_reduce("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]"), index) << endl;
+    string line;
+    getline(in, line);
+    wstring num;
+    num.assign(line.begin(), line.end());
+    parens(num);
+    while (getline(in, line)) {
+        wstring next;
+        next.assign(line.begin(), line.end());
+        parens(next);
+        num = L"(" + num + L"," + next + L")";
+        num = snailfish_reduce(num);
+        //cout << num << endl;
+    }
+    index = 0;
+    return snailfish_magnitude(num, index);
+}
+
+int64_t day18_2(ifstream&& in) {
+    int64_t result = 0;
+    size_t index = 0;
+    vector<wstring> nums;
+    string line;
+    while (getline(in, line)) {
+        wstring next;
+        next.assign(line.begin(), line.end());
+        parens(next);
+        nums.push_back(next);
+    }
+    for (int i = 0; i < nums.size(); ++i) {
+        for (int j = 0; j < nums.size(); ++j) {
+            if (i == j) {
+                continue;
+            }
+            size_t index = 0;
+            auto next = snailfish_magnitude(snailfish_reduce(wstring(L"(") + nums[i] + L"," + nums[j] + L")"), index);
+            if (next > result) {
+                result = next;
+            }
+        }
+    }
+
     return result;
 }
 
