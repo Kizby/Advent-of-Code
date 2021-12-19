@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 19;
+const int64_t DAY = 20;
 const int64_t PART = 1;
-
-int64_t day19_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day19_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day20_1(ifstream &&in) {
   int64_t result = 0;
@@ -1664,25 +1652,25 @@ int64_t day17_1(ifstream&& in) {
 
     auto best_y = -200;
     for (int x = 1; x < 300; ++x) {
-        for (int y = -156; y < 1000; ++y) {
-            int pos[] = { 0, 0 };
-            int vel[] = { x, y };
-            int cur_y = y;
-            while (pos[0] < x2 && pos[1] >= y1) {
-                pos[0] += vel[0];
-                if (vel[0] > 0) vel[0]--;
-                pos[1] += vel[1];
-                vel[1]--;
-                if (pos[1] > cur_y) {
-                    cur_y = pos[1];
-                }
-                if (x1 <= pos[0] && pos[0] <= x2 && y1 <= pos[1] && pos[1] <= y2) {
-                    if (cur_y > best_y) {
-                        best_y = cur_y;
-                    }
-                }
+      for (int y = -156; y < 1000; ++y) {
+        int pos[] = { 0, 0 };
+        int vel[] = { x, y };
+        int cur_y = y;
+        while (pos[0] < x2 && pos[1] >= y1) {
+          pos[0] += vel[0];
+          if (vel[0] > 0) vel[0]--;
+          pos[1] += vel[1];
+          vel[1]--;
+          if (pos[1] > cur_y) {
+            cur_y = pos[1];
+          }
+          if (x1 <= pos[0] && pos[0] <= x2 && y1 <= pos[1] && pos[1] <= y2) {
+            if (cur_y > best_y) {
+              best_y = cur_y;
             }
+          }
         }
+      }
     }
     return best_y;
 }
@@ -1698,24 +1686,24 @@ int64_t day17_2(ifstream&& in) {
 
     auto best_y = -200;
     for (int x = 1; x < 300; ++x) {
-        for (int y = -156; y < 1000; ++y) {
-            int pos[] = { 0, 0 };
-            int vel[] = { x, y };
-            int cur_y = y;
-            while (pos[0] < x2 && pos[1] >= y1) {
-                pos[0] += vel[0];
-                if (vel[0] > 0) vel[0]--;
-                pos[1] += vel[1];
-                vel[1]--;
-                if (pos[1] > cur_y) {
-                    cur_y = pos[1];
-                }
-                if (x1 <= pos[0] && pos[0] <= x2 && y1 <= pos[1] && pos[1] <= y2) {
-                    ++result;
-                    break;
-                }
-            }
+      for (int y = -156; y < 1000; ++y) {
+        int pos[] = { 0, 0 };
+        int vel[] = { x, y };
+        int cur_y = y;
+        while (pos[0] < x2 && pos[1] >= y1) {
+          pos[0] += vel[0];
+          if (vel[0] > 0) vel[0]--;
+          pos[1] += vel[1];
+          vel[1]--;
+          if (pos[1] > cur_y) {
+            cur_y = pos[1];
+          }
+          if (x1 <= pos[0] && pos[0] <= x2 && y1 <= pos[1] && pos[1] <= y2) {
+            ++result;
+            break;
+          }
         }
+      }
     }
     return result;
 }
@@ -1731,12 +1719,12 @@ int64_t day18_1(ifstream&& in) {
     num.assign(line.begin(), line.end());
     parens(num);
     while (getline(in, line)) {
-        wstring next;
-        next.assign(line.begin(), line.end());
-        parens(next);
-        num = L"(" + num + L"," + next + L")";
-        num = snailfish_reduce(num);
-        //cout << num << endl;
+      wstring next;
+      next.assign(line.begin(), line.end());
+      parens(next);
+      num = L"(" + num + L"," + next + L")";
+      num = snailfish_reduce(num);
+      //cout << num << endl;
     }
     index = 0;
     return snailfish_magnitude(num, index);
@@ -1748,25 +1736,353 @@ int64_t day18_2(ifstream&& in) {
     vector<wstring> nums;
     string line;
     while (getline(in, line)) {
-        wstring next;
-        next.assign(line.begin(), line.end());
-        parens(next);
-        nums.push_back(next);
+      wstring next;
+      next.assign(line.begin(), line.end());
+      parens(next);
+      nums.push_back(next);
     }
     for (int i = 0; i < nums.size(); ++i) {
-        for (int j = 0; j < nums.size(); ++j) {
-            if (i == j) {
-                continue;
-            }
-            size_t index = 0;
-            auto next = snailfish_magnitude(snailfish_reduce(wstring(L"(") + nums[i] + L"," + nums[j] + L")"), index);
-            if (next > result) {
-                result = next;
-            }
+      for (int j = 0; j < nums.size(); ++j) {
+        if (i == j) {
+          continue;
         }
+        size_t index = 0;
+        auto next = snailfish_magnitude(snailfish_reduce(wstring(L"(") + nums[i] + L"," + nums[j] + L")"), index);
+        if (next > result) {
+          result = next;
+        }
+      }
     }
 
     return result;
+}
+
+// given perceptions of beacons by misoriented scanners, how many beacons are there?
+int64_t day19_1(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  vector<vector<vi>> scanners;
+  while (getline(in, line)) {
+    vector<vi> beacons;
+    int64_t which = stoll(line.substr(12));
+    getline(in, line);
+    while (line != "") {
+      beacons.push_back(map_to_num(split(line, ",")));
+      getline(in, line);
+    }
+    scanners.push_back(beacons);
+  }
+  vector<vi> all_facings = {
+    {1, 2, 3},
+    {1, -3, 2},
+    {1, -2, -3},
+    {1, 3, -2},
+    {-1, 2, -3},
+    {-1, 3, 2},
+    {-1, -2, 3},
+    {-1, -3, -2},
+    {2, -1, 3},
+    {2, -3, -1},
+    {2, 1, -3},
+    {2, 3, 1},
+    {-2, 1, 3},
+    {-2, -3, 1},
+    {-2, -1, -3},
+    {-2, 3, -1},
+    {3, 1, 2},
+    {3, -2, 1},
+    {3, -1, -2},
+    {3, 2, -1},
+    {-3, -1, 2},
+    {-3, -2, -1},
+    {-3, 1, -2},
+    {-3, 2, 1},
+  };
+  /*
+  auto dist = [&](int64_t i, int64_t j, int64_t k) {
+    return abs(scanners[i][j][0] - scanners[i][k][0]) + abs(scanners[i][j][1] - scanners[i][k][1]) + abs(scanners[i][j][2] - scanners[i][k][2]);
+  };
+
+  map<int64_t, map<int64_t, int64_t>> dists;
+  map<int64_t, vi> reverse;
+  map<int64_t, map<int64_t, int64_t>> mapped_bases;
+  for (int j = 0; j < scanners[0].size(); ++j) {
+    for (int k = j + 1; k < scanners[0].size(); ++k) {
+      dists[j][k] = dist(0, j, k);
+      dists[k][j] = dist(0, j, k);
+      reverse[dists[j][k]] = {j, k};
+    }
+  }
+
+  bool changed = true;
+  while (changed) {
+    changed = false;
+    for (int i = 1; i < scanners.size(); ++i) {
+      vi basis;
+      auto &mapped_basis = mapped_bases[i];
+      for (int j = 0; mapped_basis.size() == 0 && j < scanners[i].size(); ++j) {
+        for (int k = j + 1; mapped_basis.size() == 0 && k < scanners[i].size(); ++k) {
+          auto cur = dist(i, j, k);
+          if (reverse.contains(cur)) {
+            basis = {j, k};
+            for (int j = 0; basis.size() == 2 && j < scanners[i].size(); ++j) {
+              if (j == basis[0] || j == basis[1]) {
+                continue;
+              }
+              if (reverse.contains(dist(i, basis[0], j)) && reverse.contains(dist(i, basis[1], j))) {
+                basis = {basis[0], basis[1], j};
+                auto first = reverse[dist(i, basis[0], basis[1])];
+                auto second = reverse[dist(i, basis[0], basis[2])];
+                auto third = reverse[dist(i, basis[1], basis[2])];
+                if (first[0] == second[0] || first[0] == second[1]) {
+                  mapped_basis[basis[0]] = first[0];
+                } else {
+                  mapped_basis[basis[0]] = first[1];
+                }
+                if (first[0] == third[0] || first[0] == third[1]) {
+                  mapped_basis[basis[1]] = first[0];
+                } else {
+                  mapped_basis[basis[1]] = first[1];
+                }
+                if (second[0] == third[0] || second[0] == third[1]) {
+                  mapped_basis[basis[2]] = second[0];
+                } else {
+                  mapped_basis[basis[2]] = second[1];
+                }
+                changed = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+      if (mapped_basis.size() == 0) {
+        continue;
+      }
+      auto one_basis = (*mapped_basis.begin()).first;
+      for (int j = 0; j < scanners[i].size(); ++j) {
+        if (mapped_basis.contains(j)) {
+          continue;
+        }
+        auto cur = dist(i, one_basis, j);
+        if (reverse.contains(cur)) {
+          // probably not new
+          auto pair = reverse[cur];
+          auto mapped_beacon = pair[0] == mapped_basis[one_basis] ? pair[1] : pair[0];
+          mapped_basis[j] = mapped_beacon;
+          for (int k = 0; k < scanners[i].size(); ++k) {
+            if (j == k || !mapped_basis.contains(k)) {
+              continue;
+            }
+            auto cur = dist(i, j, k);
+            if (!reverse.contains(cur)) {
+              dists[mapped_basis[j]][mapped_basis[k]] = cur;
+              dists[mapped_basis[k]][mapped_basis[j]] = cur;
+              reverse[cur] = {mapped_basis[j], mapped_basis[k]};
+              changed = true;
+            }
+          }
+        } else {
+          // probably new
+          int64_t beacon_index = dists.size();
+          for (int k = 0; k < scanners[i].size(); ++k) {
+            if (k == j || !mapped_basis.contains(k)) {
+              continue;
+            }
+            dists[beacon_index][mapped_basis[k]] = dist(i, j, k);
+            dists[mapped_basis[k]][beacon_index] = dist(i, j, k);
+            reverse[dist(i, j, k)] = {mapped_basis[k], beacon_index};
+            changed = true;
+          }
+        }
+      }
+    }
+  }*/
+
+  map<int64_t, vi> pos;
+  map<int64_t, vi> facing;
+  pos[0] = {0, 0, 0};
+  facing[0] = all_facings[0];
+  while (pos.size() < scanners.size()) {
+    for (size_t i = 1; i < scanners.size(); ++i) {
+      if (pos.contains(i)) {
+        continue;
+      }
+      for (auto one_facing : all_facings) {
+        vector<vi> trans_beacons;
+        for (auto beacon : scanners[i]) {
+          trans_beacons.push_back({beacon[abs(one_facing[0]) - 1], beacon[abs(one_facing[1]) - 1], beacon[abs(one_facing[2]) - 1]});
+          for (int j = 0; j < 3; ++j) {
+            if (one_facing[j] < 0) {
+              trans_beacons[trans_beacons.size() - 1][j] *= -1;
+            }
+          }
+        }
+        for (int j = 0; !pos.contains(i) && j < scanners[0].size(); ++j) {
+          for (int k = 0; !pos.contains(i) && k < trans_beacons.size(); ++k) {
+            // assume scanners[0][j] is scanners[i][k]
+            vi offset = {scanners[0][j][0] - trans_beacons[k][0], scanners[0][j][1] - trans_beacons[k][1], scanners[0][j][2] - trans_beacons[k][2]};
+            int matches = 1;
+            for (int l = 0; l < scanners[0].size(); ++l) {
+              if (l == j) {
+                continue;
+              }
+              for (int m = 0; m < trans_beacons.size(); ++m) {
+                if (m == k) {
+                  continue;
+                }
+                if (scanners[0][l][0] == trans_beacons[m][0] + offset[0] && scanners[0][l][1] == trans_beacons[m][1] + offset[1] && scanners[0][l][2] == trans_beacons[m][2] + offset[2]) {
+                  ++matches;
+                }
+              }
+            }
+            if (matches > 4) {
+              // assume this is right
+              cout << "Scanner " << i << " at " << -offset[0] << ", " << -offset[1] << ", " << -offset[2] << endl;
+              pos[i] = {-offset[0], -offset[1], -offset[2]};
+              facing[i] = one_facing;
+              for (auto beacon : trans_beacons) {
+                beacon = {beacon[0] + offset[0], beacon[1] + offset[1], beacon[2] + offset[2]};
+                bool found = false;
+                for (int l = 0; l < scanners[0].size(); ++l) {
+                  if (scanners[0][l] == beacon) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  scanners[0].push_back(beacon);
+                }
+              }
+            }
+          }
+        }
+        if (pos.contains(i)) {
+          break;
+        }
+      }
+    }
+  }
+
+  return scanners[0].size();
+}
+
+// what's the furthest manhattan distance between scanners?
+int64_t day19_2(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  vector<vector<vi>> scanners;
+  while (getline(in, line)) {
+    vector<vi> beacons;
+    int64_t which = stoll(line.substr(12));
+    getline(in, line);
+    while (line != "") {
+      beacons.push_back(map_to_num(split(line, ",")));
+      getline(in, line);
+    }
+    scanners.push_back(beacons);
+  }
+  vector<vi> all_facings = {
+    {1, 2, 3},
+    {1, -3, 2},
+    {1, -2, -3},
+    {1, 3, -2},
+    {-1, 2, -3},
+    {-1, 3, 2},
+    {-1, -2, 3},
+    {-1, -3, -2},
+    {2, -1, 3},
+    {2, -3, -1},
+    {2, 1, -3},
+    {2, 3, 1},
+    {-2, 1, 3},
+    {-2, -3, 1},
+    {-2, -1, -3},
+    {-2, 3, -1},
+    {3, 1, 2},
+    {3, -2, 1},
+    {3, -1, -2},
+    {3, 2, -1},
+    {-3, -1, 2},
+    {-3, -2, -1},
+    {-3, 1, -2},
+    {-3, 2, 1},
+  };
+
+  map<int64_t, vi> pos;
+  map<int64_t, vi> facing;
+  pos[0] = {0, 0, 0};
+  facing[0] = all_facings[0];
+  while (pos.size() < scanners.size()) {
+    for (size_t i = 1; i < scanners.size(); ++i) {
+      if (pos.contains(i)) {
+        continue;
+      }
+      for (auto one_facing : all_facings) {
+        vector<vi> trans_beacons;
+        for (auto beacon : scanners[i]) {
+          trans_beacons.push_back({beacon[abs(one_facing[0]) - 1], beacon[abs(one_facing[1]) - 1], beacon[abs(one_facing[2]) - 1]});
+          for (int j = 0; j < 3; ++j) {
+            if (one_facing[j] < 0) {
+              trans_beacons[trans_beacons.size() - 1][j] *= -1;
+            }
+          }
+        }
+        for (int j = 0; !pos.contains(i) && j < scanners[0].size(); ++j) {
+          for (int k = 0; !pos.contains(i) && k < trans_beacons.size(); ++k) {
+            // assume scanners[0][j] is scanners[i][k]
+            vi offset = {scanners[0][j][0] - trans_beacons[k][0], scanners[0][j][1] - trans_beacons[k][1], scanners[0][j][2] - trans_beacons[k][2]};
+            int matches = 1;
+            for (int l = 0; l < scanners[0].size(); ++l) {
+              if (l == j) {
+                continue;
+              }
+              for (int m = 0; m < trans_beacons.size(); ++m) {
+                if (m == k) {
+                  continue;
+                }
+                if (scanners[0][l][0] == trans_beacons[m][0] + offset[0] && scanners[0][l][1] == trans_beacons[m][1] + offset[1] && scanners[0][l][2] == trans_beacons[m][2] + offset[2]) {
+                  ++matches;
+                }
+              }
+            }
+            if (matches > 4) {
+              // assume this is right
+              cout << "Scanner " << i << " at " << -offset[0] << ", " << -offset[1] << ", " << -offset[2] << endl;
+              pos[i] = {-offset[0], -offset[1], -offset[2]};
+              facing[i] = one_facing;
+              for (auto beacon : trans_beacons) {
+                beacon = {beacon[0] + offset[0], beacon[1] + offset[1], beacon[2] + offset[2]};
+                bool found = false;
+                for (int l = 0; l < scanners[0].size(); ++l) {
+                  if (scanners[0][l] == beacon) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  scanners[0].push_back(beacon);
+                }
+              }
+            }
+          }
+        }
+        if (pos.contains(i)) {
+          break;
+        }
+      }
+    }
+  }
+
+  for (int i = 0; i < pos.size(); ++i) {
+    for (int j = i + 1; j < pos.size(); ++j) {
+      auto cur = abs(pos[i][0] - pos[j][0]) + abs(pos[i][1] - pos[j][1]) + abs(pos[i][2] - pos[j][2]);
+      if (cur > result) {
+        result = cur;
+      }
+    }
+  }
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
