@@ -196,7 +196,7 @@ public:
   }
   CellIterator &operator++() {
     ++col;
-    if (col >= backing_grid.size() == 0 ? 0 : backing_grid[0].size()) {
+    if (col >= (backing_grid.size() == 0 ? 0 : backing_grid[0].size())) {
       col = 0;
       ++row;
     }
@@ -216,15 +216,17 @@ CellIterator<T> cells(vector<vector<T>> &source) {
 }
 
 template<typename T>
-vector<CellPointer<T>> adjacent(CellPointer<T> cell, bool cardinal = true) {
+vector<CellPointer<T>> adjacent(CellPointer<T> cell, bool cardinal = true, bool include_center = false) {
   vector<CellPointer<T>> result;
   if (cell.row > 0) {
-    result.push_back(CellPointer<T>{cell.backing_grid, cell.row - 1, cell.col});
     if (!cardinal) {
       if (cell.col > 0) {
         result.push_back(CellPointer<T>{cell.backing_grid, cell.row - 1, cell.col - 1});
       }
-      if (cell.col < cell.backing_grid[0].size() - 1) {
+    }
+    result.push_back(CellPointer<T>{cell.backing_grid, cell.row - 1, cell.col});
+    if (!cardinal) {
+      if (cell.col < cell.backing_grid[cell.row - 1].size() - 1) {
         result.push_back(CellPointer<T>{cell.backing_grid, cell.row - 1, cell.col + 1});
       }
     }
@@ -232,16 +234,21 @@ vector<CellPointer<T>> adjacent(CellPointer<T> cell, bool cardinal = true) {
   if (cell.col > 0) {
     result.push_back(CellPointer<T>{cell.backing_grid, cell.row, cell.col - 1});
   }
-  if (cell.col < cell.backing_grid[0].size() - 1) {
+  if (include_center) {
+    result.push_back(CellPointer<T>{cell.backing_grid, cell.row, cell.col});
+  }
+  if (cell.col < cell.backing_grid[cell.row].size() - 1) {
     result.push_back(CellPointer<T>{cell.backing_grid, cell.row, cell.col + 1});
   }
   if (cell.row < cell.backing_grid.size() - 1) {
-    result.push_back(CellPointer<T>{cell.backing_grid, cell.row + 1, cell.col});
     if (!cardinal) {
       if (cell.col > 0) {
         result.push_back(CellPointer<T>{cell.backing_grid, cell.row + 1, cell.col - 1});
       }
-      if (cell.col < cell.backing_grid[0].size() - 1) {
+    }
+    result.push_back(CellPointer<T>{cell.backing_grid, cell.row + 1, cell.col});
+    if (!cardinal) {
+      if (cell.col < cell.backing_grid[cell.row + 1].size() - 1) {
         result.push_back(CellPointer<T>{cell.backing_grid, cell.row + 1, cell.col + 1});
       }
     }
