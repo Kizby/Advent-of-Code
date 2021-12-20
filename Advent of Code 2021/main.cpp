@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 20;
+const int64_t DAY = 21;
 const int64_t PART = 1;
-
-int64_t day20_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day20_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day21_1(ifstream &&in) {
   int64_t result = 0;
@@ -2079,6 +2067,148 @@ int64_t day19_2(ifstream &&in) {
       auto cur = abs(pos[i][0] - pos[j][0]) + abs(pos[i][1] - pos[j][1]) + abs(pos[i][2] - pos[j][2]);
       if (cur > result) {
         result = cur;
+      }
+    }
+  }
+  return result;
+}
+
+// cellular automata
+int64_t day20_1(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  //in = ifstream("../TextFile1.txt");
+  getline(in, line);
+  vector<int> alg;
+  for (char c : line) {
+    alg.push_back(c == '#');
+  }
+  getline(in, line);
+  vector<vector<int>> image;
+  while (getline(in, line)) {
+    image.push_back({});
+    for (char c : line) {
+      image[image.size() - 1].push_back(c == '#');
+    }
+  }
+  vector<vector<int>> next;
+  for (int i = 0; i < 2; ++i) {
+    for (int j = 0; j < image.size(); ++j) {
+      image[j].insert(image[j].begin(), i % 2 == 1);
+      image[j].insert(image[j].begin(), i % 2 == 1);
+      image[j].push_back(i % 2 == 1);
+      image[j].push_back(i % 2 == 1);
+    }
+    image.insert(image.begin(), vector<int>(image[0].size(), i % 2 == 1));
+    image.insert(image.begin(), vector<int>(image[0].size(), i % 2 == 1));
+    image.push_back(vector<int>(image[0].size(), i % 2 == 1));
+    image.push_back(vector<int>(image[0].size(), i % 2 == 1));
+    for (auto vec : image) {
+      for (auto cell : vec) {
+        cout << (cell ? "#" : ".");
+      }
+      cout << endl;
+    }
+
+    next = image;
+    cout << endl;
+    for (auto cell : cells(image)) {
+      if (cell.row == 0 || cell.row == image.size() - 1 || cell.col == 0 || cell.col == image[0].size() - 1) {
+        cell(next) = alg[i % 2 == 0 ? 0 : 511];
+        continue;
+      }
+      int64_t index = 0;
+      for (auto adj : adjacent(cell, false, true)) {
+        index <<= 1;
+        index += *adj;
+      }
+      cout << index << ",";
+      cell(next) = alg[index];
+    }
+    cout << endl;
+    image = next;
+  }
+  for (auto vec : image) {
+    for (auto cell : vec) {
+      cout << (cell ? "#" : ".");
+    }
+    cout << endl;
+  }
+  for (auto vec : image) {
+    for (auto cell : vec) {
+      if (cell) {
+        ++result;
+      }
+    }
+  }
+  return result;
+}
+
+// cellular automata, but more iterations
+int64_t day20_2(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  //in = ifstream("../TextFile1.txt");
+  getline(in, line);
+  vector<int> alg;
+  for (char c : line) {
+    alg.push_back(c == '#');
+  }
+  getline(in, line);
+  vector<vector<int>> image;
+  while (getline(in, line)) {
+    image.push_back({});
+    for (char c : line) {
+      image[image.size() - 1].push_back(c == '#');
+    }
+  }
+  vector<vector<int>> next;
+  for (int i = 0; i < 50; ++i) {
+    for (int j = 0; j < image.size(); ++j) {
+      image[j].insert(image[j].begin(), i % 2 == 1);
+      image[j].insert(image[j].begin(), i % 2 == 1);
+      image[j].push_back(i % 2 == 1);
+      image[j].push_back(i % 2 == 1);
+    }
+    image.insert(image.begin(), vector<int>(image[0].size(), i % 2 == 1));
+    image.insert(image.begin(), vector<int>(image[0].size(), i % 2 == 1));
+    image.push_back(vector<int>(image[0].size(), i % 2 == 1));
+    image.push_back(vector<int>(image[0].size(), i % 2 == 1));
+    /*for (auto vec : image) {
+      for (auto cell : vec) {
+        cout << (cell ? "#" : ".");
+      }
+      cout << endl;
+    }*/
+
+    next = image;
+    //cout << endl;
+    for (auto cell : cells(image)) {
+      if (cell.row == 0 || cell.row == image.size() - 1 || cell.col == 0 || cell.col == image[0].size() - 1) {
+        cell(next) = alg[i % 2 == 0 ? 0 : 511];
+        continue;
+      }
+      int64_t index = 0;
+      for (auto adj : adjacent(cell, false, true)) {
+        index <<= 1;
+        index += *adj;
+      }
+      //cout << index << ",";
+      cell(next) = alg[index];
+    }
+    cout << endl;
+    image = next;
+  }
+  /*for (auto vec : image) {
+    for (auto cell : vec) {
+      cout << (cell ? "#" : ".");
+    }
+    cout << endl;
+  }*/
+  for (auto vec : image) {
+    for (auto cell : vec) {
+      if (cell) {
+        ++result;
       }
     }
   }
