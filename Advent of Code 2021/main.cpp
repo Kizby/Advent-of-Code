@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 21;
+const int64_t DAY = 22;
 const int64_t PART = 1;
-
-int64_t day21_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day21_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day22_1(ifstream &&in) {
   int64_t result = 0;
@@ -2213,6 +2201,200 @@ int64_t day20_2(ifstream &&in) {
     }
   }
   return result;
+}
+
+int64_t day21_1(ifstream &&in) {
+  int64_t result = 0;
+  int player1 = 7;
+  int player2 = 8;
+  int score1 = 0;
+  int score2 = 0;
+  int die = 0;
+  while (score1 < 1000 && score2 < 1000) {
+    player1 += ++die;
+    player1 += ++die;
+    player1 += ++die;
+    player1 = (player1 - 1) % 10 + 1;
+    score1 += player1;
+    if (score1 >= 1000) {
+      break;
+    }
+    player2 += ++die;
+    player2 += ++die;
+    player2 += ++die;
+    player2 = (player2 - 1) % 10 + 1;
+    score2 += player2;
+    cout << player1 << ", " << player2 << endl;
+  }
+
+  return score1 < score2 ? score1 * die : score2 * die;
+}
+
+int64_t day21_2(ifstream &&in) {
+  map<int, map<int, map<int, map<int, int64_t>>>> wins;
+  map<int, map<int, map<int, map<int, int64_t>>>> losses;
+  for (int goal1 = 1; goal1 <= 21; ++goal1) {
+    for (int goal2 = 1; goal2 <= 21; ++goal2) {
+      for (int space1 = 1; space1 <= 10; ++space1) {
+        for (int space2 = 1; space2 <= 10; ++space2) {
+          for (int die11 = 1; die11 <= 3; ++die11) {
+            for (int die12 = 1; die12 <= 3; ++die12) {
+              for (int die13 = 1; die13 <= 3; ++die13) {
+                int dice1 = die11 + die12 + die13;
+                int new_space1 = (space1 + die11 + die12 + die13 - 1) % 10 + 1;
+                if (new_space1 >= goal1) {
+                  ++wins[goal1][goal2][space1][space2];
+                  continue;
+                }
+                for (int die21 = 1; die21 <= 3; ++die21) {
+                  for (int die22 = 1; die22 <= 3; ++die22) {
+                    for (int die23 = 1; die23 <= 3; ++die23) {
+                      int new_space2 = (space2 + die21 + die22 + die23 - 1) % 10 + 1;
+                      if (new_space2 >= goal2) {
+                        ++losses[goal1][goal2][space1][space2];
+                        continue;
+                      }
+                      wins[goal1][goal2][space1][space2] += wins[goal1 - new_space1][goal2 - new_space2][new_space1][new_space2];
+                      losses[goal1][goal2][space1][space2] += losses[goal1 - new_space1][goal2 - new_space2][new_space1][new_space2];
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  //cout << wins[21][21][4][8] << ", " << losses[21][21][4][8] << endl;
+  string line;
+  getline(in, line);
+  int space1 = stoll(line.substr(28));
+  getline(in, line);
+  int space2 = stoll(line.substr(28));
+  return max(wins[21][21][space1][space2], losses[21][21][space1][space2]);
+
+  //5 + 8 + 1 + 2 + 3 + 4
+  //8 + 1 + 2 + 3 + 4
+  /*
+    wins[1][i][j][k] = 3
+    wins[2][1][10][i] = 2
+    losses[2][1][10][i] = 3
+    wins[2][i][j][k] = 3
+    wins[3][1][10][i] = 1
+    losses[3][1][10][i] = 6
+    losses[4][1][i][j] = 9
+    wins[3][2][10][10] = 1 + wins[3 - 1][2 - 1][1][1] + wins[3 - 2][2 - 1][2][1]
+    losses[3][2][10][10] = 4
+    wins[2][2][10][10] = 2 + wins[2 - 1][2 - 1][1][1]
+    losses[2][2][10][10] = 2
+    wins[3][3][10][10] = 1 + wins[3-1][3-1][1][1] + wins[3-1][3-2][1][2] + wins[3-2][3-1][2][1] + wins[3-2][3-2][2][2]
+    losses[3][3][10][10] = 2
+  */
+
+  /*
+  // player1, player2, score1, score2
+  // (1, 1, 1)
+  // (1, 1, (2, 2, (1, 1, 1))
+  // (1, (2, (1, 1, 1), (1, 1, 1)), (2, (1, 1, 1), (1, 1, 1))
+  // player wins:
+  //  - 1 if roll of 1 meets goal
+  //  - player wins given roll of 1 this round and rolls of 1, 2, 3 on other's round
+  //  - 1 if roll of 2 meets goal
+  //  - 1 if roll of 3 meets goal
+  int goal = 2;
+  map<int, map<int, map<int, map<int, int64_t>>>> player1_wins;
+  map<int, map<int, map<int, map<int, int64_t>>>> player2_wins;
+  map<int, map<int, map<int, map<int, int64_t>>>> player1_losses;
+  bool changed = true;
+  while (changed) {
+    changed = false;
+    for (int player1_sofar = goal - 1; player1_sofar >= 0; --player1_sofar) {
+      for (int player2_sofar = goal - 1; player2_sofar >= 0; --player2_sofar) {
+        for (int player1_cur = 1; player1_cur <= 10; ++player1_cur) {
+          for (int player2_cur = 1; player2_cur <= 10; ++player2_cur) {
+            if (!player1_wins[player1_cur][player2_cur][player1_sofar].contains(player2_sofar)) {
+              bool all_valid = true;
+              for (int die = 1; die <= 3; ++die) {
+                int player1 = (player1_cur + die - 1) % 10 + 1;
+                if (player1_sofar + player1 >= goal) {
+                  continue;
+                }
+                for (int die2 = 1; die2 <= 3; ++die2) {
+                  int player2 = (player2_cur + die2 - 1) % 10 + 1;
+                  if (!player1_wins[player1][player2][player1_sofar + player1].contains(player2_sofar + player2)) {
+                    all_valid = false;
+                  }
+                }
+                if (!player2_wins[player1][player2_cur][player1_sofar + player1].contains(player2_sofar)) {
+                  all_valid = false;
+                }
+              }
+              if (all_valid) {
+                for (int die = 1; die <= 3; ++die) {
+                  int player1 = (player1_cur + die - 1) % 10 + 1;
+                  if (player1_sofar + player1 >= goal) {
+                    ++player1_wins[player1_cur][player2_cur][player1_sofar][player2_sofar];
+                  } else {
+                    for (int die2 = 1; die2 <= 3; ++die2) {
+                      int player2 = (player2_cur + die2 - 1) % 10 + 1;
+                      if (player2_sofar + player2 < goal) {
+                        player1_wins[player1_cur][player2_cur][player1_sofar][player2_sofar] += player1_wins[player1][player2][player1_sofar + player1][player2_sofar + player2];
+                      }
+                    }
+                    player1_wins[player1_cur][player2_cur][player1_sofar][player2_sofar] -= player2_wins[player1][player2_cur][player1_sofar + player1][player2_sofar];
+                    player1_losses[player1_cur][player2_cur][player1_sofar][player2_sofar] += player2_wins[player1][player2_cur][player1_sofar + player1][player2_sofar];
+                  }
+                }
+                changed = true;
+
+              }
+
+            }
+            if (!player2_wins[player1_cur][player2_cur][player1_sofar].contains(player2_sofar)) {
+              bool all_valid = true;
+              for (int die = 1; die <= 3; ++die) {
+                int player2 = (player2_cur + die - 1) % 10 + 1;
+                if (player2_sofar + player2 >= goal) {
+                  continue;
+                }
+                for (int die2 = 1; die2 <= 3; ++die2) {
+                  int player1 = (player1_cur + die2 - 1) % 10 + 1;
+                  if (!player2_wins[player1][player2][player1_sofar + player1].contains(player2_sofar + player2)) {
+                    all_valid = false;
+                  }
+                }
+                if (!player2_wins[player1_cur][player2][player1_sofar].contains(player2_sofar + player2)) {
+                  all_valid = false;
+                }
+              }
+              if (all_valid) {
+                for (int die = 1; die <= 3; ++die) {
+                  int player2 = (player2_cur + die - 1) % 10 + 1;
+                  if (player1_sofar + player2 >= goal) {
+                    ++player2_wins[player1_cur][player2_cur][player1_sofar][player2_sofar];
+                  } else {
+                    for (int die2 = 1; die2 <= 3; ++die2) {
+                      int player1 = (player1_cur + die2 - 1) % 10 + 1;
+                      if (player1_sofar + player1 < goal) {
+                        player2_wins[player1_cur][player2_cur][player1_sofar][player2_sofar] += player2_wins[player1][player2][player1_sofar + player1][player2_sofar + player2];
+                      }
+                    }
+                    player2_wins[player1_cur][player2_cur][player1_sofar][player2_sofar] -= player1_wins[player1_cur][player2][player1_sofar][player2_sofar + player2];
+                  }
+                }
+                changed = true;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  // first to 1: player 1 in 3 universes
+  // first to 2: if player 1 starts at 10,
+  cout << player1_wins[player1][player2][0][0] << ", " << player1_losses[player1][player2][0][0] << endl;
+  return result;*/
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
