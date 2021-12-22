@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 22;
+const int64_t DAY = 23;
 const int64_t PART = 1;
-
-int64_t day22_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day22_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day23_1(ifstream &&in) {
   int64_t result = 0;
@@ -2203,6 +2191,7 @@ int64_t day20_2(ifstream &&in) {
   return result;
 }
 
+// who wins a dice game with a deterministic die?
 int64_t day21_1(ifstream &&in) {
   int64_t result = 0;
   int player1 = 7;
@@ -2230,6 +2219,7 @@ int64_t day21_1(ifstream &&in) {
   return score1 < score2 ? score1 * die : score2 * die;
 }
 
+// split the universe for each roll; how many universes does the best player win in?
 int64_t day21_2(ifstream &&in) {
   map<int, map<int, map<int, map<int, int64_t>>>> wins;
   map<int, map<int, map<int, map<int, int64_t>>>> losses;
@@ -2395,6 +2385,265 @@ int64_t day21_2(ifstream &&in) {
   // first to 2: if player 1 starts at 10,
   cout << player1_wins[player1][player2][0][0] << ", " << player1_losses[player1][player2][0][0] << endl;
   return result;*/
+}
+
+// draw some overlapping boxes within a restricted volume; how many lights are on?
+int64_t day22_1(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  map<int, map<int, map<int, bool>>> grid;
+  while (getline(in, line)) {
+    auto tokens = split(line, " |=|(\\.\\.)|,");
+    for (int x = max(-50, stoi(tokens[2])); x <= min(50, stoi(tokens[3])); ++x) {
+      for (int y = max(-50, stoi(tokens[5])); y <= min(50, stoi(tokens[6])); ++y) {
+        for (int z = max(-50, stoi(tokens[8])); z <= min(50, stoi(tokens[9])); ++z) {
+          grid[x][y][z] = (tokens[0] == "on");
+        }
+      }
+    }
+  }
+  for (int x = -50; x <= 50; ++x) {
+    for (int y = -50; y <= 50; ++y) {
+      for (int z = -50; z <= 50; ++z) {
+        if (grid[x][y][z]) {
+          ++result;
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+// don't restrict the volume
+int64_t day22_2(ifstream &&in) {
+  int64_t result = 0;
+  string line;
+  //in = ifstream("../TextFile2.txt");
+  vector<vector<vector<int64_t>>> grid;
+  while (getline(in, line)) {
+    cout << grid.size() << endl;
+    auto tokens = split(line, " |=|(\\.\\.)|,");
+    bool on = (tokens[0] == "on");
+    bool skip = false;
+    vector<vector<int64_t>> cuboid{{stoi(tokens[2]), stoi(tokens[5]), stoi(tokens[8])}, {stoi(tokens[3]), stoi(tokens[6]), stoi(tokens[9])}};
+    /*for (int i = 0; i < 3; ++i) {
+      if (cuboid[0][i] > 50) {
+        skip = true;
+      }
+      if (cuboid[1][i] < -50) {
+        skip = true;
+      }
+      cuboid[0][i] = max(cuboid[0][i], -50ll);
+      cuboid[1][i] = min(cuboid[1][i], 50ll);
+    }*/
+    if (skip) {
+      continue;
+    }
+    for (int j = 0; j < grid.size(); ++j) {
+      int64_t x1 = cuboid[0][0];
+      int64_t y1 = cuboid[0][1];
+      int64_t z1 = cuboid[0][2];
+      int64_t x2 = cuboid[1][0];
+      int64_t y2 = cuboid[1][1];
+      int64_t z2 = cuboid[1][2];
+      int64_t gx1 = grid[j][0][0];
+      int64_t gy1 = grid[j][0][1];
+      int64_t gz1 = grid[j][0][2];
+      int64_t gx2 = grid[j][1][0];
+      int64_t gy2 = grid[j][1][1];
+      int64_t gz2 = grid[j][1][2];
+      int par_x1 = 0;
+      if (x1 < gx1) {
+        par_x1 = -1;
+      } else if (x1 > gx2) {
+        par_x1 = 1;
+      }
+      int par_y1 = 0;
+      if (y1 < gy1) {
+        par_y1 = -1;
+      } else if (y1 > gy2) {
+        par_y1 = 1;
+      }
+      int par_z1 = 0;
+      if (z1 < gz1) {
+        par_z1 = -1;
+      } else if (z1 > gz2) {
+        par_z1 = 1;
+      }
+      int par_x2 = 0;
+      if (x2 < gx1) {
+        par_x2 = -1;
+      } else if (x2 > gx2) {
+        par_x2 = 1;
+      }
+      int par_y2 = 0;
+      if (y2 < gy1) {
+        par_y2 = -1;
+      } else if (y2 > gy2) {
+        par_y2 = 1;
+      }
+      int par_z2 = 0;
+      if (z2 < gz1) {
+        par_z2 = -1;
+      } else if (z2 > gz2) {
+        par_z2 = 1;
+      }
+      auto parity = vector{par_x1, par_y1, par_z1, par_x2, par_y2, par_z2};
+      if (parity == vector{0, 0, 0, 0, 0, 0}) {
+        // entirely within
+        if (on) {
+          skip = true;
+          break;
+        }
+      }
+      if (par_x1 == -1 && par_x2 == 1 && par_y1 == -1 && par_y2 == 1 && par_z1 == -1 && par_z2 == 1) {
+        // entirely without
+        grid.erase(grid.begin() + j--);
+      } else if (par_x1 == 1 && par_x2 == 1 || par_x1 == -1 && par_x2 == -1 ||
+        par_y1 == 1 && par_y2 == 1 || par_y1 == -1 && par_y2 == -1 ||
+        par_z1 == 1 && par_z2 == 1 || par_z1 == -1 && par_z2 == -1) {
+        // unrelated
+        continue;
+      } else {
+        grid.erase(grid.begin() + j--);
+        // 1D, 2 segments:
+        // gx1 -> min(x1 - 1, gx2)
+        // max(gx1, x2 + 1) -> gx2
+        // 2D, 8 squares:
+        // gx1, gy1 -> min(x1 - 1, gx2), min(y1 - 1, gy2)
+        // gx1, max(y1, gy1) -> min(x1 - 1, gx2), min(y2, gy2)
+        // gx1, max(y2 + 1, gy1) -> min(x1 - 1, gx2), gy2
+        // max(x1, gx1), gy1 -> min(x2, gx2), y1 - 1
+        // x1, y1 -> x2, y2 (not)
+        // x1, y2 + 1 -> x2, gy2
+        // x2 + 1, gy1 => gx2, y1 - 1
+        // x2 + 1, y1 => gx2, y2
+        // x2 + 1, y2 + 1 => gx2, gy2
+        // 3D, 26 cubies:
+        // gx1, gy1, gz1 -> x1 - 1, y1 - 1, z1 - 1 (par_x1 == 0 || par_y1 == 0 || par_z1 == 0)
+        // gx1, gy1, z1 -> x1 - 1, y1 - 1, z2      (
+        // gx1, gy1, z2 -> x1 - 1, y1 - 1, gz2
+        for (int qx = -1; qx <= 1; ++qx) {
+          for (int qy = -1; qy <= 1; ++qy) {
+            for (int qz = -1; qz <= 1; ++qz) {
+              if (qx == 0 && qy == 0 && qz == 0) {
+                continue;
+              }
+              vector<int64_t> x_bounds;
+              switch (qx) {
+              case -1: x_bounds = vector{gx1, x1 - 1}; break;
+              case 0: x_bounds = vector{max(gx1, x1), min(gx2, x2)}; break;
+              case 1: x_bounds = vector{x2 + 1, gx2}; break;
+              };
+              if (x_bounds[1] - x_bounds[0] < 0) {
+                continue;
+              }
+              vector<int64_t> y_bounds;
+              switch (qy) {
+              case -1: y_bounds = vector{gy1, y1 - 1}; break;
+              case 0: y_bounds = vector{max(gy1, y1), min(gy2, y2)}; break;
+              case 1: y_bounds = vector{y2 + 1, gy2}; break;
+              };
+              if (y_bounds[1] - y_bounds[0] < 0) {
+                continue;
+              }
+              vector<int64_t> z_bounds;
+              switch (qz) {
+              case -1: z_bounds = vector{gz1, z1 - 1}; break;
+              case 0: z_bounds = vector{max(gz1, z1), min(gz2, z2)}; break;
+              case 1: z_bounds = vector{z2 + 1, gz2}; break;
+              };
+              if (z_bounds[1] - z_bounds[0] < 0) {
+                continue;
+              }
+              grid.push_back({{x_bounds[0], y_bounds[0], z_bounds[0]}, {x_bounds[1], y_bounds[1], z_bounds[1]}});
+            }
+          }
+        }
+      }
+      /*
+    } else if (parity == vector{-1, -1, -1, 0, 0, 0}) {
+      grid[j] = vector{vector{gx1, gy1, z2 + 1}, vector{gx2, gy2, gz2}};
+      grid.push_back(vector{vector{gx1, y2 + 1, gz1}, vector{gx2, gy2, z2}});
+      grid.push_back(vector{vector{x2 + 1, gy1, gz1}, vector{gx2, y2, z2}});
+    } else if (parity == vector{-1, -1, -1, 0, 0, 1}) {
+      grid[j] = vector{vector{gx1, gy1, z2 + 1}, vector{gx2, gy2, gz2}};
+      grid.push_back(vector{vector{x2 + 1, gy1, gz1}, vector{gx2, y2, gz2}});
+    } else if (parity == vector{-1, -1, -1, 0, 1, 0}) {
+    } else if (parity == vector{-1, -1, -1, 0, 1, 1}) {
+    } else if (parity == vector{-1, -1, -1, 1, 0, 0}) {
+    } else if (parity == vector{-1, -1, -1, 1, 0, 1}) {
+    } else if (parity == vector{-1, -1, -1, 1, 1, 0}) {
+    } else if (parity == vector{-1, -1, 0, 0, 0, 0}) {
+    } else if (parity == vector{-1, -1, 0, 0, 0, 1}) {
+    } else if (parity == vector{-1, -1, 0, 0, 1, 0}) {
+    } else if (parity == vector{-1, -1, 0, 0, 1, 1}) {
+    } else if (parity == vector{-1, -1, 0, 1, 0, 0}) {
+    } else if (parity == vector{-1, -1, 0, 1, 0, 1}) {
+    } else if (parity == vector{-1, -1, 0, 1, 1, 0}) {
+    } else if (parity == vector{-1, -1, 0, 1, 1, 1}) {
+    } else if (parity == vector{-1, 0, -1, 0, 0, 0}) {
+    } else if (parity == vector{-1, 0, -1, 0, 0, 1}) {
+    } else if (parity == vector{-1, 0, -1, 0, 1, 0}) {
+    } else if (parity == vector{-1, 0, -1, 0, 1, 1}) {
+    } else if (parity == vector{-1, 0, -1, 1, 0, 0}) {
+    } else if (parity == vector{-1, 0, -1, 1, 0, 1}) {
+    } else if (parity == vector{-1, 0, -1, 1, 1, 0}) {
+    } else if (parity == vector{-1, 0, -1, 1, 1, 1}) {
+    } else if (parity == vector{-1, 0, 0, 0, 0, 0}) {
+    } else if (parity == vector{-1, 0, 0, 0, 0, 1}) {
+    } else if (parity == vector{-1, 0, 0, 0, 1, 0}) {
+    } else if (parity == vector{-1, 0, 0, 0, 1, 1}) {
+    } else if (parity == vector{-1, 0, 0, 1, 0, 0}) {
+    } else if (parity == vector{-1, 0, 0, 1, 0, 1}) {
+    } else if (parity == vector{-1, 0, 0, 1, 1, 0}) {
+    } else if (parity == vector{-1, 0, 0, 1, 1, 1}) {
+    } else if (parity == vector{0, -1, -1, 0, 0, 0}) {
+    } else if (parity == vector{0, -1, -1, 0, 0, 1}) {
+    } else if (parity == vector{0, -1, -1, 0, 1, 0}) {
+    } else if (parity == vector{0, -1, -1, 0, 1, 1}) {
+    } else if (parity == vector{0, -1, -1, 1, 0, 0}) {
+    } else if (parity == vector{0, -1, -1, 1, 0, 1}) {
+    } else if (parity == vector{0, -1, -1, 1, 1, 0}) {
+    } else if (parity == vector{0, -1, -1, 1, 1, 1}) {
+    } else if (parity == vector{0, -1, 0, 0, 0, 0}) {
+    } else if (parity == vector{0, -1, 0, 0, 0, 1}) {
+    } else if (parity == vector{0, -1, 0, 0, 1, 0}) {
+    } else if (parity == vector{0, -1, 0, 0, 1, 1}) {
+    } else if (parity == vector{0, -1, 0, 1, 0, 0}) {
+    } else if (parity == vector{0, -1, 0, 1, 0, 1}) {
+    } else if (parity == vector{0, -1, 0, 1, 1, 0}) {
+    } else if (parity == vector{0, -1, 0, 1, 1, 1}) {
+    } else if (parity == vector{0, 0, -1, 0, 0, 0}) {
+    } else if (parity == vector{0, 0, -1, 0, 0, 1}) {
+    } else if (parity == vector{0, 0, -1, 0, 1, 0}) {
+    } else if (parity == vector{0, 0, -1, 0, 1, 1}) {
+    } else if (parity == vector{0, 0, -1, 1, 0, 0}) {
+    } else if (parity == vector{0, 0, -1, 1, 0, 1}) {
+    } else if (parity == vector{0, 0, -1, 1, 1, 0}) {
+    } else if (parity == vector{0, 0, -1, 1, 1, 1}) {
+    } else if (parity == vector{0, 0, 0, 0, 0, 0}) {
+    } else if (parity == vector{0, 0, 0, 0, 0, 1}) {
+    } else if (parity == vector{0, 0, 0, 0, 1, 0}) {
+    } else if (parity == vector{0, 0, 0, 0, 1, 1}) {
+    } else if (parity == vector{0, 0, 0, 1, 0, 0}) {
+    } else if (parity == vector{0, 0, 0, 1, 0, 1}) {
+    } else if (parity == vector{0, 0, 0, 1, 1, 0}) {
+    } else if (parity == vector{0, 0, 0, 1, 1, 1}) {
+
+    }*/
+    }
+    if (on && !skip) {
+      grid.push_back(cuboid);
+    }
+  }
+
+  for (auto cuboid : grid) {
+    result += (cuboid[1][0] - cuboid[0][0] + 1) * (cuboid[1][1] - cuboid[0][1] + 1) * (cuboid[1][2] - cuboid[0][2] + 1);
+  }
+
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
