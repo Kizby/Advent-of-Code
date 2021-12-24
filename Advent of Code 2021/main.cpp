@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 23;
+const int64_t DAY = 24;
 const int64_t PART = 1;
-
-int64_t day23_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day23_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day24_1(ifstream &&in) {
   int64_t result = 0;
@@ -2644,6 +2632,170 @@ int64_t day22_2(ifstream &&in) {
   }
 
   return result;
+}
+
+// solve a sokoban-esque puzzle; did this manually
+int64_t day23_1(ifstream&& in) {
+    int64_t result = 0;
+
+    return result;
+}
+
+struct day23_state {
+    bool valid = false;
+    int score = 0;
+    vector<char> spaces;
+    vector<vector<char>> columns;
+};
+
+map<char, int> day23_costs{
+    {'A', 1},
+    {'B', 10},
+    {'C', 100},
+    {'D', 1000},
+};
+
+day23_state day23_try_move(const day23_state& in, int start, int end) {
+    if (start >= 4 && end >= 4) {
+        // can't move space-to-space
+        return day23_state{};
+    }
+    char which = '.';
+    int start_depth = -1, end_depth = -1;
+    if (start < 4) {
+        // moving from a column
+        bool any_mismatch = false;
+        for (int i = 0; i < in.columns[start].size(); ++i) {
+            if (in.columns[start][i] != '.') {
+                if (in.columns[start][i] != 'A' + start) {
+                    any_mismatch = true;
+                }
+                if (start_depth == -1) {
+                    start_depth = i;
+                    which = in.columns[start][i];
+                }
+            }
+        }
+        if (which == 'A' + start && !any_mismatch) {
+            // column is already complete
+            return day23_state{};
+        }
+    }
+    else {
+        which = in.spaces[start - 4];
+    }
+    if (which == '.') {
+        // nothing to move
+        return day23_state{};
+    }
+    if (end < 4) {
+        // moving to a column
+        if (which - 'A' != end) {
+            // not the right column
+            return day23_state{};
+        }
+        for (int i = in.columns[end].size() - 1; i >= 0; --i) {
+            if (in.columns[end][i] == '.') {
+                end_depth = i;
+                break;
+            }
+            if (in.columns[end][i] != which) {
+                // column isn't ready to receive yet
+                return day23_state{};
+            }
+        }
+    }
+    else if (in.spaces[end - 4] != '.') {
+        // already something there
+        return day23_state{};
+    }
+    map<int, int> space_map{ {0, 0}, { 1, 1 }, { 2, 3 }, { 3, 5 }, { 4, 7 }, { 5, 9 }, { 6, 10 } };
+    map<int, int> rev_space_map{ {0, 0}, { 1, 1 }, { 3, 2 }, { 5, 3 }, { 7, 4 }, { 9, 5 }, { 10, 6 } };
+    day23_state result{ in };
+    int real_start_space, real_end_space;
+    if (start_depth > -1) {
+        // move into the hallway
+        result.score += (start_depth + 1) * (day23_costs[which]);
+        result.columns[start][start_depth] = '.';
+        real_start_space = (start + 1) * 2;
+    }
+    else {
+        result.spaces[start - 4] = '.';
+        real_start_space = space_map[start - 4];
+    }
+    if (end_depth > -1) {
+        // move into the corridor
+        result.score += (end_depth + 1) * (day23_costs[which]);
+        result.columns[end][end_depth] = which;
+        real_end_space = (end + 1) * 2;
+    }
+    else {
+        result.spaces[end - 4] = which;
+        real_end_space = space_map[end - 4];
+    }
+    int delta = abs(real_end_space - real_start_space) / (real_end_space - real_start_space);
+    for (int i = real_start_space + delta; i != real_end_space; i += delta) {
+        if (rev_space_map.contains(i) && in.spaces[rev_space_map[i]] != '.') {
+            // something in the way
+            return day23_state{};
+        }
+    }
+    result.score += abs(real_start_space - real_end_space) * day23_costs[which];
+    return result;
+}
+
+int64_t day23_best_score(day23_state state, int64_t best) {
+    if (!state.valid || (best != -1 && state.score >= best)) {
+        return best;
+    }
+    // check for completion
+    int matches = 0;
+    for (int i = 0; i < 4; ++i) {
+        for (char c : state.columns[i]) {
+            if (c == 'A' + i) {
+                ++matches;
+            }
+        }
+    }
+    if (matches == 4 * state.columns[0].size()) {
+        return state.score;
+    }
+    for (int i = 0; i < state.spaces.size() + 4; ++i) {
+        for (int j = 0; j < state.spaces.size() + 4; ++j) {
+            if (i == j) {
+                continue;
+            }
+            auto next = day23_best_score(day23_try_move(state, i, j), best);
+            if (best == -1 || next != -1 && next < best) {
+                best = next;
+            }
+        }
+    }
+    return best;
+}
+
+// solve it with more pieces; takes several minutes to run, but works
+int64_t day23_2(ifstream&& in) {
+    int64_t result = 0;
+    //in = ifstream("../TextFile1.txt");
+    auto lines = split(slurp(in));
+    day23_state state;
+    state.valid = true;
+    state.spaces = { '.','.','.','.','.','.','.' };
+    state.columns = vector<vector<char>>{ {},{},{},{} };
+    lines.insert(lines.begin() + 3, "  #D#C#B#A");
+    lines.insert(lines.begin() + 4, "  #D#B#A#C");
+    for (auto line : lines) {
+        auto tokens = split(line, "[ #]+");
+        if (tokens.size() < 4) {
+            continue;
+        }
+        for (int i = 0; i < 4; ++i) {
+            state.columns[i].push_back(tokens[i][0]);
+        }
+    }
+
+    return day23_best_score(state, -1);
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
