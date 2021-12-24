@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 24;
+const int64_t DAY = 25;
 const int64_t PART = 1;
-
-int64_t day24_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day24_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 int64_t day25_1(ifstream &&in) {
   int64_t result = 0;
@@ -2796,6 +2784,107 @@ int64_t day23_2(ifstream&& in) {
     }
 
     return day23_best_score(state, -1);
+}
+
+int64_t day24_max_solve(int64_t w, int64_t z, const vector<vector<string>>& lines, size_t index) {
+    map<char, int> registers = {
+        {'w', w},
+        {'x', 0},
+        {'y', 0},
+        {'z', z},
+    };
+    if (z > 10000000) {
+        return -1;
+    }
+    for (int j = index; j < lines.size(); ++j) {
+        auto line = lines[j];
+        if (line[0] == "inp") {
+            for (int i = 9; i >= 1; --i) {
+                auto result = day24_max_solve(i, registers['z'], lines, j + 1);
+                if (result != -1) {
+                    while (i < result) {
+                        i *= 10;
+                    }
+                    return i + result;
+                }
+            }
+            return -1;
+        }
+        else if (line[0] == "add") {
+            int value;
+            if (registers.contains(line[2][0])) {
+                value = registers[line[2][0]];
+            }
+            else {
+                value = stoi(line[2]);
+            }
+            registers[line[1][0]] += value;
+        }
+        else if (line[0] == "mul") {
+            int value;
+            if (registers.contains(line[2][0])) {
+                value = registers[line[2][0]];
+            }
+            else {
+                value = stoi(line[2]);
+            }
+            registers[line[1][0]] *= value;
+        }
+        else if (line[0] == "div") {
+            int value;
+            if (registers.contains(line[2][0])) {
+                value = registers[line[2][0]];
+            }
+            else {
+                value = stoi(line[2]);
+            }
+            if (value == 0) {
+                return -1;
+            }
+            registers[line[1][0]] /= value;
+        }
+        else if (line[0] == "mod") {
+            int value;
+            if (registers.contains(line[2][0])) {
+                value = registers[line[2][0]];
+            }
+            else {
+                value = stoi(line[2]);
+            }
+            if (registers[line[1][0]] < 0 || value <= 0) {
+                return -1;
+            }
+            registers[line[1][0]] %= value;
+        }
+        else if (line[0] == "eql") {
+            int value;
+            if (registers.contains(line[2][0])) {
+                value = registers[line[2][0]];
+            }
+            else {
+                value = stoi(line[2]);
+            }
+            registers[line[1][0]] = (registers[line[1][0]] == value ? 1 : 0);
+        }
+    }
+    if (registers['z'] == 0) {
+        return 0;
+    }
+    return -1;
+}
+
+// find largest number that passes a checksum; worked this out manually millenia(?) before this finished running
+int64_t day24_1(ifstream&& in) {
+    int64_t result = 0;
+    auto lines = split(split(slurp(in)), " ");
+    return day24_max_solve(0, 0, lines, 0);
+}
+
+// find the smallest
+int64_t day24_2(ifstream&& in) {
+    int64_t result = 0;
+
+    return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {

@@ -1,0 +1,252 @@
+inp w     w: m1, x1: 0, y1: 0, z1: 0
+mul x 0   x: 0
+add x z   x: z1
+mod x 26  x: z1%26
+div z 1a  z: z1/1
+add x 11b x: z1%26 + 11
+eql x w   x: z1%26 + 11 == m1
+eql x 0   x: z1%26 + 11 != m1
+mul y 0   y: 0
+add y 25  y: 25
+mul y x   y: 25 * (z1%26 + 11 != m1)
+add y 1   y: 25 * (z1%26 + 11 != m1) + 1
+mul z y   z: (25 * (z1%26 + 11 != m1) + 1) * z1 / 1
+mul y 0   y: 0
+add y w   y: m1
+add y 8c  y: m1+8
+mul y x   y: (m1+8) * (z1%26 + 11 != m1)
+add z y   z: (z1%26 + b != m1) * (m1 + c + 25*z1/a) + z1 / a == m1 + 8
+inp w     w: m2
+mul x 0   x: 0
+add x z   x: z2
+mod x 26  x: z2%26
+div z 1   z: z2/1
+add x 14  x: z2%26 / 14
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y   z: ((m1 + 8)%26 + 14 != m2) * (m2 + 13 + 25 * (m1 + 8)) + (m1 + 8) == m2 + 13 + 26 * (m1 + 8)
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 10
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 2
+mul y x
+add z y   z: m3 + 2 + 26*(m2 + 13 + 26 * (m1 + 8))
+inp w     z%26 + b == m ? z/a : m + c + 26*z/a
+mul x 0
+add x z
+mod x 26
+div z 26
+add x 0
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 7
+mul y x
+add z y   z: m3 + 2 == m4 : m2 + 13 + 26 * (m1 + 8) : m4 + 7 + 26*(m2 + 13 + 26 * (m1 + 8)))  (((m3 + 2 == m4))) (79)
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 12
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 11
+mul y x
+add z y   z: m5 + 11 + 26 * (m2 + 13 + 26 * (m1 + 8))
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 12
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 4
+mul y x
+add z y   z: m6 + 4 + 26*(m5 + 11 + 26 * (m2 + 13 + 26 * (m1 + 8)))
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 12
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y   z: m7 + 13 + 26*(m6 + 4 + 26*(m5 + 11 + 26 * (m2 + 13 + 26 * (m1 + 8))))
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -8
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y  z: m6 + 4 + 26*(m5 + 11 + 26 * (m2 + 13 + 26 * (m1 + 8))) (((m7 + 5 == m8))) (49)
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -9
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 10
+mul y x
+add z y  z: m5 + 11 + 26 * (m2 + 13 + 26 * (m1 + 8)) (((m6 - 5 == m9))) (94)
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 11
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 1
+mul y x
+add z y  z: m10 + 1 + 26*(m5 + 11 + 26 * (m2 + 13 + 26 * (m1 + 8)))
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x 0
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 2
+mul y x
+add z y  z: m5 + 11 + 26 * (m2 + 13 + 26 * (m1 + 8)) (((m10 + 1 == m11))) (89)
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -5
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y (
+mul y 0
+add y w (z + x * (w + 14) < 26)
+add y 14 (z + x * (y + 14) < 26)
+mul y x (z + x * y < 26)
+add z y (y + z < 26)   z: m2 + 13 + 26 * (m1 + 8) (((m5 + 6 == m12))) (39)
+inp w
+mul x 0
+add x z (zl - 6 != m13 ? zh * 26 + m13 + 6 == 12 + m14 : zh == 12 + m14) (m13,14 = 93 -> z < 26, z != 15) (or zl==zh==m13+6, m14==m13-6)
+mod x 26 (x%26 - 6 != m13 ? zh / 26 * 26 + m13 + 6 == 12 + m14 : z / 26 == 12 + m14)
+div z 26 (x - 6 != m13 ? zh / 26 * 26 + m13 + 6 == 12 + m14 : z / 26 == 12 + m14)
+add x -6 (x - 6 != m13 ? z * 26 + m13 + 6 == 12 + m14 : z == 12 + m14)
+eql x w (x != w ? z * 26 + m13 + 6 == 12 + m14 : z == 12 + m14)
+eql x 0
+mul y 0
+add y 25 (z * (x * 25 + 1) + x * (m13 + 6)) == 12 + m14)
+mul y x (z * (x * y + 1) + x * (m13 + 6)) == 12 + m14)
+add y 1 (z * (y + 1) + x * (m13 + 6)) == 12 + m14)
+mul z y (z * y + x * (m13 + 6)) == 12 + m14)
+mul y 0
+add y w (z + x * (m13 + 6)) == 12 + m14)
+add y 6 (z + x * (y + 6) == 12 + m14)
+mul y x (z+x*y == 12+m14)
+add z y (z+y == 12+m14)   z: m1 + 8 (((m2 + 7 == m13))) (29)
+inp w (z == 12+m14)
+mul x 0
+add x z (z%26 - 12 != w ? (z/26)*26 == -w - 14 : z/26 == 0)
+mod x 26 (x%26 - 12 != w ? (z/26)*26 == -w - 14 : z/26 == 0)
+div z 26 (x - 12 != w ? (z/26)*26 == -w - 14 : z/26 == 0)
+add x -12 (x - 12 != w ? z*26 == -w - 14 : z == 0)
+eql x w (x != w ? z*26 == -w - 14 : z == 0)
+eql x 0 (x == 0 ? z*26 == -w - 14 : z == 0)
+mul y 0
+add y 25 (z*(x*25+1) == -x * (w + 14))
+mul y x (z*(x*y+1) == -x * (w + 14))
+add y 1 (z*(y+1) == -x * (w + 14))
+mul z y (z*y == -x * (w + 14))
+mul y 0
+add y w (z == -x * (w + 14))
+add y 14 (z + (y+14)*x == 0)
+mul y x (z+y*x == 0)   z: 0 (((m1 - 4 == m14))) (95)
+add z y (z+y == 0)
