@@ -2,20 +2,8 @@
 
 using namespace std;
 
-const int64_t DAY = 25;
+const int64_t DAY = 1;
 const int64_t PART = 1;
-
-int64_t day25_1(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
-
-int64_t day25_2(ifstream &&in) {
-  int64_t result = 0;
-
-  return result;
-}
 
 // how many measurements are higher than the previous one?
 int64_t day1_1(ifstream &&in) {
@@ -2885,6 +2873,52 @@ int64_t day24_2(ifstream&& in) {
     int64_t result = 0;
 
     return result;
+}
+
+// simulate cucumbers moving along a sea floor
+int64_t day25_1(ifstream &&in) {
+  int64_t result = 0;
+  //in = ifstream("../TextFile4.txt");
+  auto lines = split(slurp(in));
+  bool changed = true;
+  int step;
+  for (step = 1; changed; ++step) {
+    changed = false;
+    // east
+    auto next = lines;
+    for (int i = 0; i < lines.size(); ++i) {
+      for (int j = 0; j < lines[i].size(); ++j) {
+        if (lines[i][j] == '>') {
+          if (lines[i][(j + 1) % lines[i].size()] == '.') {
+            next[i][j] = '.';
+            next[i][(j + 1) % lines[i].size()] = '>';
+            changed = true;
+          }
+        }
+      }
+    }
+    lines = next;
+    for (int i = 0; i < lines.size(); ++i) {
+      for (int j = 0; j < lines[i].size(); ++j) {
+        if (lines[i][j] == 'v') {
+          if (lines[(i + 1) % lines.size()][j] == '.') {
+            next[i][j] = '.';
+            next[(i + 1) % lines.size()][j] = 'v';
+            changed = true;
+          }
+        }
+      }
+    }
+    lines = next;
+  }
+  return step - 1;
+}
+
+// just turn in the previous 49 stars ^^
+int64_t day25_2(ifstream &&in) {
+  int64_t result = 0;
+
+  return result;
 }
 
 int64_t(*const DAYS[25][2])(ifstream &&in) = {
